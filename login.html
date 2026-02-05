@@ -525,7 +525,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // DOM Elements - dengan null checking
+        // DOM Elements
         const loginForm = document.getElementById('loginForm');
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -534,25 +534,25 @@
         const roleInputs = document.querySelectorAll('input[name="role"]');
         const officeField = document.getElementById('officeField');
         
-        // Base URL for API
-        const API_BASE_URL = 'http://localhost:3000/api';
-        
         // Demo credentials data
         const demoCredentials = {
             owner: {
                 email: 'owner@notarydoc.com',
                 password: 'owner123',
-                role: 'owner'
+                role: 'owner',
+                name: 'Ketua Notaris Demo'
             },
             staff: {
                 email: 'staff@notarydoc.com',
                 password: 'staff123',
-                role: 'staff'
+                role: 'staff',
+                name: 'Staff Administrasi Demo'
             },
             client: {
                 email: 'client@notarydoc.com',
                 password: 'client123',
-                role: 'client'
+                role: 'client',
+                name: 'Klien Demo'
             }
         };
         
@@ -565,25 +565,24 @@
             return el;
         }
         
-        // FIX: Inisialisasi dengan null checking
+        // Inisialisasi dengan null checking
         if (!loginForm) {
             console.error('Login form not found!');
-            return; // Hentikan eksekusi jika form tidak ditemukan
+            return;
         }
         
-        // Set default role to staff dengan null checking
+        // Set default role to staff
         const staffRadio = document.querySelector('input[name="role"][value="staff"]');
         if (staffRadio) {
             staffRadio.checked = true;
             
-            // Cek apakah parent element ada sebelum mengakses classList
             const staffCard = staffRadio.parentElement?.querySelector('.role-card');
             if (staffCard) {
                 staffCard.classList.add('selected');
             }
         }
         
-        // Toggle password visibility dengan null checking
+        // Toggle password visibility
         if (togglePassword && passwordInput && eyeIcon) {
             togglePassword.addEventListener('click', function() {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -593,7 +592,7 @@
             });
         }
         
-        // Handle role selection dengan null checking
+        // Handle role selection
         if (roleInputs.length > 0) {
             roleInputs.forEach(input => {
                 input.addEventListener('change', function() {
@@ -602,7 +601,7 @@
                         card.classList.remove('selected');
                     });
                     
-                    // Add selected class to current role card dengan null checking
+                    // Add selected class to current role card
                     const roleCard = this.parentElement?.querySelector('.role-card');
                     if (roleCard) {
                         roleCard.classList.add('selected');
@@ -656,37 +655,93 @@
             }, 3000);
         }
         
-        // Login function
-        async function performLogin(email, password, role, officeCode) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        role: role
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || data.message || 'Login gagal');
+        // VALIDASI LOGIN LOKAL (TANPA BACKEND)
+        function validateLogin(email, password, role) {
+            // Validasi demo credentials
+            const demoUsers = {
+                'owner@notarydoc.com': { 
+                    password: 'owner123', 
+                    role: 'owner', 
+                    name: 'Ketua Notaris Demo',
+                    officeId: 'OFFICE001'
+                },
+                'staff@notarydoc.com': { 
+                    password: 'staff123', 
+                    role: 'staff', 
+                    name: 'Staff Administrasi Demo',
+                    officeId: 'OFFICE001'
+                },
+                'client@notarydoc.com': { 
+                    password: 'client123', 
+                    role: 'client', 
+                    name: 'Klien Demo',
+                    officeId: 'OFFICE001'
                 }
-                
-                if (!data.success) {
-                    throw new Error(data.error || 'Login gagal');
+            };
+            
+            const user = demoUsers[email];
+            
+            if (!user) {
+                // Cek jika email lain digunakan (untuk testing)
+                if (email.includes('@')) {
+                    return {
+                        success: true,
+                        data: {
+                            token: 'demo-token-' + Date.now(),
+                            user: {
+                                email: email,
+                                role: role,
+                                name: email.split('@')[0],
+                                office_id: 'DEMO_OFFICE',
+                                demo: true
+                            }
+                        }
+                    };
                 }
-                
-                return data.data;
-                
-            } catch (error) {
-                console.error('Login API error:', error);
-                throw error;
+                throw new Error('Email tidak ditemukan. Gunakan email demo @notarydoc.com');
             }
+            
+            if (user.password !== password) {
+                throw new Error('Password salah. Gunakan password demo (contoh: owner123)');
+            }
+            
+            if (user.role !== role) {
+                throw new Error(`Role tidak sesuai. Email ini adalah akun ${user.role}, silakan pilih role: ${user.role}`);
+            }
+            
+            return {
+                success: true,
+                data: {
+                    token: 'demo-token-' + Date.now(),
+                    user: {
+                        email: email,
+                        role: role,
+                        name: user.name,
+                        office_id: user.officeId,
+                        demo: true
+                    }
+                }
+            };
+        }
+        
+        // Fungsi untuk redirect ke halaman demo
+        function redirectToDemoPage(role) {
+            const demoPages = {
+                'owner': './demo/demo_ketua.html',
+                'staff': './demo/demo_staff.html',
+                'client': './demo/demo_client.html'
+            };
+            
+            const defaultPage = './demo/demo_dashboard.html';
+            const redirectUrl = demoPages[role] || defaultPage;
+            
+            console.log('Redirecting to demo page:', redirectUrl);
+            
+            // Tambahkan parameter demo ke URL
+            const url = new URL(redirectUrl, window.location.origin);
+            url.searchParams.set('demo', 'true');
+            
+            window.location.href = url.toString();
         }
         
         // Handle form submission
@@ -738,8 +793,17 @@
             submitBtn.disabled = true;
             
             try {
-                // Perform login
-                const loginData = await performLogin(email, password, role, officeCode);
+                // Simulasi loading
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Validasi login lokal
+                const result = validateLogin(email, password, role);
+                
+                if (!result.success) {
+                    throw new Error('Validasi gagal');
+                }
+                
+                const loginData = result.data;
                 
                 // Login successful
                 showMessage(`🎉 Login berhasil! Mengalihkan ke dashboard...`, false);
@@ -749,14 +813,13 @@
                 storage.setItem('access_token', loginData.token);
                 storage.setItem('user_role', loginData.user.role);
                 storage.setItem('user_email', loginData.user.email);
-                storage.setItem('user_id', loginData.user.user_id || loginData.user.id || '');
                 storage.setItem('user_name', loginData.user.name || loginData.user.email.split('@')[0]);
-                storage.setItem('office_id', loginData.user.office_id || '');
+                storage.setItem('office_id', loginData.user.office_id || 'DEMO_OFFICE');
                 storage.setItem('is_logged_in', 'true');
+                storage.setItem('is_demo_user', 'true');
                 
-                // Handle demo user
-                if (loginData.user.demo) {
-                    storage.setItem('is_demo_user', 'true');
+                if (officeCode) {
+                    storage.setItem('office_code', officeCode);
                 }
                 
                 if (trustedDevice) {
@@ -773,9 +836,9 @@
                     submitBtn.classList.remove('animate-pulse', 'bg-green-500/20');
                 }, 1000);
                 
-                // Redirect to dashboard based on role
+                // Redirect to demo page
                 setTimeout(() => {
-                    redirectToDashboard(role, loginData.user.demo || false);
+                    redirectToDemoPage(role);
                 }, 1500);
                 
             } catch (error) {
@@ -796,33 +859,7 @@
             }
         });
         
-        // Redirect function
-        function redirectToDashboard(role, isDemo = false) {
-            let redirectUrl = '';
-            
-            if (isDemo) {
-                // Redirect to demo pages
-                const demoPaths = {
-                    owner: './demo/demo_ketua.html',
-                    staff: './demo/demo_staff.html',
-                    client: './demo/demo_client.html'
-                };
-                redirectUrl = demoPaths[role] || './dashboard.html';
-            } else {
-                // Redirect to real dashboard pages
-                const dashboardPaths = {
-                    owner: './html/dashboard.html',
-                    staff: './dashboard/staff.html',
-                    client: './dashboard/client.html'
-                };
-                redirectUrl = dashboardPaths[role] || './dashboard.html';
-            }
-            
-            console.log('Redirecting to:', redirectUrl);
-            window.location.href = redirectUrl;
-        }
-        
-        // Add focus effects to form inputs (jika ada)
+        // Add focus effects to form inputs
         const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
         inputs.forEach(input => {
             const parent = input.parentElement;
@@ -847,7 +884,7 @@
             });
         });
         
-        // Add hover effects to demo cards (jika ada)
+        // Add hover effects to demo cards
         const demoCards = document.querySelectorAll('.demo-badge > div > div');
         demoCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
@@ -861,12 +898,13 @@
             });
         });
         
-        // FIX: Handle URL parameters untuk auto-fill form
+        // Handle URL parameters untuk auto-fill form
         function handleUrlParameters() {
             const urlParams = new URLSearchParams(window.location.search);
             const emailFromUrl = urlParams.get('email');
             const passwordFromUrl = urlParams.get('password');
             const officeCodeFromUrl = urlParams.get('officeCode');
+            const autoLogin = urlParams.get('autoLogin');
             
             if (emailFromUrl) {
                 const emailField = document.getElementById('email');
@@ -889,17 +927,16 @@
                 }
             }
             
-            // Auto-submit jika ada semua parameter
-            if (emailFromUrl && passwordFromUrl) {
+            // Auto-login jika ada semua parameter dan autoLogin=true
+            if (emailFromUrl && passwordFromUrl && autoLogin === 'true') {
                 setTimeout(() => {
-                    // Auto-klik tombol submit
-                    const submitBtn = loginForm?.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        showMessage('Mengisi data dari URL...', false);
-                        setTimeout(() => {
+                    showMessage('Melakukan auto-login...', false);
+                    setTimeout(() => {
+                        const submitBtn = loginForm?.querySelector('button[type="submit"]');
+                        if (submitBtn) {
                             loginForm?.dispatchEvent(new Event('submit'));
-                        }, 1000);
-                    }
+                        }
+                    }, 1000);
                 }, 500);
             }
         }
@@ -908,12 +945,24 @@
         handleUrlParameters();
     });
     
-    // Global function to fill demo credentials and redirect to demo page
+    // Global function to fill demo credentials
     function fillCredentials(role) {
         const credentials = {
-            owner: { email: 'owner@notarydoc.com', password: 'owner123' },
-            staff: { email: 'staff@notarydoc.com', password: 'staff123' },
-            client: { email: 'client@notarydoc.com', password: 'client123' }
+            owner: { 
+                email: 'owner@notarydoc.com', 
+                password: 'owner123',
+                name: 'Ketua Notaris Demo'
+            },
+            staff: { 
+                email: 'staff@notarydoc.com', 
+                password: 'staff123',
+                name: 'Staff Administrasi Demo'
+            },
+            client: { 
+                email: 'client@notarydoc.com', 
+                password: 'client123',
+                name: 'Klien Demo'
+            }
         };
         
         // Set email and password
@@ -935,78 +984,97 @@
             roleInput.dispatchEvent(new Event('change'));
         }
         
-        // Show feedback
-        const messageContainer = document.getElementById('message-container');
-        if (messageContainer) {
-            messageContainer.textContent = `✅ Kredensial demo ${role} telah dimasukkan! Mengalihkan ke halaman demo...`;
-            messageContainer.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20');
-            messageContainer.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
-        }
-        
-        // Auto-submit after 1 second
+        // Auto-klik tombol login setelah 1 detik
         setTimeout(() => {
             const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                const submitBtn = loginForm.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    loginForm.dispatchEvent(new Event('submit'));
+            const submitBtn = loginForm?.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                // Show feedback
+                const messageContainer = document.getElementById('message-container');
+                if (messageContainer) {
+                    messageContainer.textContent = `✅ Menggunakan akun demo ${role}...`;
+                    messageContainer.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red500/20');
+                    messageContainer.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
                 }
+                
+                // Auto-login
+                setTimeout(() => {
+                    loginForm?.dispatchEvent(new Event('submit'));
+                }, 1000);
             }
-        }, 1000);
+        }, 300);
     }
     
-    // Function to check if user is logged in (use in dashboard pages)
-    async function checkAuth() {
+    // Function to check if user is logged in (untuk halaman dashboard)
+    function checkAuth() {
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        const isDemo = localStorage.getItem('is_demo_user') === 'true' || sessionStorage.getItem('is_demo_user') === 'true';
         
-        if (!token) {
+        if (!token && !isDemo) {
+            // Redirect to login jika tidak ada token dan bukan demo
             window.location.href = 'login.html';
             return null;
         }
         
-        try {
-            const response = await fetch('http://localhost:3000/api/auth/me', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (!response.ok || !data.success) {
-                throw new Error('Authentication failed');
-            }
-            
-            return data.data;
-            
-        } catch (error) {
-            console.error('Auth check error:', error);
-            // Clear stored auth data
-            localStorage.removeItem('access_token');
-            sessionStorage.removeItem('access_token');
-            localStorage.removeItem('user_role');
-            localStorage.removeItem('user_email');
-            localStorage.removeItem('is_logged_in');
-            
-            window.location.href = 'login.html';
-            return null;
-        }
+        // Untuk demo, return data dari localStorage
+        return {
+            email: localStorage.getItem('user_email') || sessionStorage.getItem('user_email') || 'demo@user.com',
+            role: localStorage.getItem('user_role') || sessionStorage.getItem('user_role') || 'demo',
+            name: localStorage.getItem('user_name') || sessionStorage.getItem('user_name') || 'Demo User',
+            office_id: localStorage.getItem('office_id') || sessionStorage.getItem('office_id') || 'DEMO_OFFICE',
+            demo: isDemo
+        };
     }
     
-    // Function to logout (use in dashboard pages)
+    // Function to logout (untuk halaman dashboard)
     function logout() {
         // Clear all stored data
         localStorage.clear();
         sessionStorage.clear();
         
-        // Optional: Call backend logout endpoint
-        fetch('http://localhost:3000/api/auth/logout', {
-            method: 'POST'
-        }).catch(console.error);
-        
         // Redirect to login
         window.location.href = 'login.html';
+    }
+    
+    // Function untuk membuat demo data (untuk halaman dashboard)
+    function generateDemoData(role) {
+        const demoData = {
+            owner: {
+                total_documents: 156,
+                pending_reviews: 12,
+                completed_this_month: 45,
+                total_clients: 89,
+                recent_activities: [
+                    { id: 1, activity: 'Dokumen Akta Jual Beli disetujui', time: '10 menit lalu' },
+                    { id: 2, activity: 'Staff baru ditambahkan', time: '1 jam lalu' },
+                    { id: 3, activity: 'Laporan bulanan di-generate', time: '2 jam lalu' }
+                ]
+            },
+            staff: {
+                total_documents: 78,
+                pending_processing: 8,
+                completed_today: 12,
+                awaiting_signature: 5,
+                recent_tasks: [
+                    { id: 1, task: 'Persiapan Akta Sewa', client: 'PT. Maju Jaya', deadline: 'Hari ini' },
+                    { id: 2, task: 'Revisi Akta Hibah', client: 'Budi Santoso', deadline: 'Besok' },
+                    { id: 3, task: 'Scan Dokumen Klien', client: 'CV. Sejahtera', deadline: '2 hari lagi' }
+                ]
+            },
+            client: {
+                my_documents: 6,
+                pending_review: 2,
+                completed: 4,
+                awaiting_action: 1,
+                recent_documents: [
+                    { id: 1, document: 'Akta Jual Beli Tanah', status: 'Selesai', date: '15 Jan 2024' },
+                    { id: 2, document: 'Surat Kuasa', status: 'Menunggu TTD', date: '20 Jan 2024' },
+                    { id: 3, document: 'Akta Pendirian PT', status: 'Dalam Proses', date: '25 Jan 2024' }
+                ]
+            }
+        };
+        
+        return demoData[role] || demoData.client;
     }
 </script>
 </body>

@@ -724,25 +724,24 @@
             };
         }
         
-        // Fungsi untuk redirect ke halaman demo
         function redirectToDemoPage(role) {
-            const demoPages = {
-                'owner': './demo/demo_ketua.html',
-                'staff': './demo/demo_staff.html',
-                'client': './demo/demo_client.html'
-            };
-            
-            const defaultPage = './demo/demo_dashboard.html';
-            const redirectUrl = demoPages[role] || defaultPage;
-            
-            console.log('Redirecting to demo page:', redirectUrl);
-            
-            // Tambahkan parameter demo ke URL
-            const url = new URL(redirectUrl, window.location.origin);
-            url.searchParams.set('demo', 'true');
-            
-            window.location.href = url.toString();
-        }
+    const demoPages = {
+        'owner': '../demo/demo_ketua.html',
+        'staff': '../demo/demo_staff.html',
+        'client': '../demo/demo_client.html'
+    };
+
+    const defaultPage = '../demo/demo_dashboard.html';
+    const redirectUrl = demoPages[role] || defaultPage;
+
+    console.log('Redirecting to demo page:', redirectUrl);
+
+    const url = new URL(redirectUrl, window.location.href);
+    url.searchParams.set('demo', 'true');
+
+    window.location.href = url.toString();
+}
+
         
         // Handle form submission
         loginForm.addEventListener('submit', async function(e) {

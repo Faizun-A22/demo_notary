@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NotaryDoc Tracker - New File Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f96ad",
+                        "primary-dark": "#166e80",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#121e20",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c2e",
+                        "alert-red": "#dc2626",
+                        "alert-bg": "#fef2f2",
+                        "success-green": "#10b981",
+                        "warning-yellow": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+        .sidebar-link.active {
+            background-color: #e8f0f2;
+            color: #1f96ad;
+        }
+        .dark .sidebar-link.active {
+            background-color: rgba(31, 150, 173, 0.2);
+            color: #1f96ad;
+        }
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Material Symbols overrides */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom animations */
+        .form-input {
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .workflow-step {
+            transition: all 0.3s ease;
+        }
+        .workflow-step:hover {
+            transform: translateX(5px);
+        }
+        .action-button {
+            transition: all 0.2s ease;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="hidden w-64 flex-col border-r border-slate-200 bg-surface-light dark:border-slate-800 dark:bg-surface-dark lg:flex">
+        <div class="flex h-16 items-center gap-3 border-b border-slate-100 px-6 dark:border-slate-800">
+            <div class="flex items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary">
+                <span class="material-symbols-outlined">history_edu</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">NotaryDoc</span>
+        </div>
+        <div class="flex flex-1 flex-col justify-between p-4">
+            <nav class="space-y-1">
+                <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu</div>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="dashboard.html">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a class="sidebar-link active flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors" href="new_file.html">
+                    <span class="material-symbols-outlined text-[20px]">note_add</span>
+                    New File
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="all_files.html">
+                    <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                    All Files
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="clients.html">
+                    <span class="material-symbols-outlined text-[20px]">group</span>
+                    Clients
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="reports.html">
+                    <span class="material-symbols-outlined text-[20px]">analytics</span>
+                    Reports
+                </a>
+            </nav>
+            <div class="flex flex-col gap-4">
+                <nav class="space-y-1">
+                    <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">System</div>
+                    <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="#">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                        Settings
+                    </a>
+                </nav>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+                    <div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200" data-alt="User profile picture showing a smiling professional woman">
+                        <img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxVNWhQG_W_ed3cfYulehqFgy1zHjDMMIjmROUMwH1GdQ_-0YSFkCDbhAUraVspPkQuL0OxU4dpVlRtthPZjLgeYBHkvhbel0_QFpjzjajgl5twyaTdmLKvqyYVPWymWFDcQYNKWMkw6jaECoHtTlY5zsE3Cd5YLdUFJEX3Iz8WFCIdH6sH7N9wTapvHPoggn6meeaInC7hTPiKLsDjeY9KtEQzcjbvxSR5QU8MOMweu2luT32b5p7neJyxE0brTANOuECjzNuvegc"/>
+                    </div>
+                    <div class="flex flex-1 flex-col overflow-hidden">
+                        <span class="truncate text-sm font-bold text-slate-900 dark:text-white">Sarah W.</span>
+                        <span class="truncate text-xs text-slate-500 dark:text-slate-400">Notary Lead</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex h-full flex-1 flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-surface-light px-6 dark:border-slate-800 dark:bg-surface-dark">
+            <div class="lg:hidden">
+                <button class="flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex w-full items-center justify-between gap-6">
+                <h1 class="hidden text-xl font-bold text-slate-900 dark:text-white sm:block">New File Entry</h1>
+                <div class="flex items-center gap-4">
+                    <!-- Search Box -->
+                    <div class="hidden md:block relative w-80">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
+                        <input class="h-10 w-full rounded-lg border-none bg-slate-100 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white dark:placeholder-slate-400" placeholder="Search file #, client, or type..." type="text"/>
+                    </div>
+                    <!-- Notification Button -->
+                    <button class="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <span class="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-400">notifications</span>
+                        <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-alert-red"></span>
+                    </button>
+                    <!-- Create Button -->
+                    <button class="action-button flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-dark hover:shadow-md active:scale-95">
+                        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                        <span class="hidden sm:inline">New File</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar bg-background-light p-6 dark:bg-background-dark animate-fade-in">
+            <div class="mx-auto max-w-7xl space-y-8">
+                <!-- Progress Indicator -->
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-4 border border-slate-200 dark:border-slate-700 animate-slide-up">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">File Creation Progress</h3>
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Step 1 of 3</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">1</div>
+                            <div class="h-1 w-16 bg-primary"></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-sm font-bold">2</div>
+                            <div class="h-1 w-16 bg-slate-200 dark:bg-slate-700"></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 text-sm font-bold">3</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-slate-500 dark:text-slate-400">
+                        <span>File Details</span>
+                        <span>Document Verification</span>
+                        <span>Review & Create</span>
+                    </div>
+                </div>
+                
+                <!-- Main Form Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Column: Form Content (2 cols) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Section 1: General Information -->
+                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.1s">
+                            <div class="flex items-center gap-2 mb-6">
+                                <span class="material-symbols-outlined text-primary">description</span>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">File Details</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Service Type <span class="text-alert-red">*</span></label>
+                                    <div class="relative">
+                                        <select class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-3 pl-4 pr-10">
+                                            <option disabled value="">Select a service type</option>
+                                            <option selected value="skmht">SKMHT (Surat Kuasa Membebankan Hak Tanggungan)</option>
+                                            <option value="ajb">AJB (Akta Pengikatan Jual Beli)</option>
+                                            <option value="fidusia">Akta Jaminan Fidusia</option>
+                                            <option value="skmenjual">Akta Surat Kuasa Untuk Menjual</option>
+                                            <option value="sewa">Akta Perjanjian Sewa Menyewa</option>
+                                            <option value="royac">Akta Consen Roya</option>
+                                            <option value="pjkredit">Akta Perjanjian Kredit</option>
+                                            <option value="yayasan">Akta Pendirian Yayasan</option>
+                                            <option value="pt">Akta Pendirian PT</option>
+                                            <option value="cv">Akta Pendirian/Perubahan CV</option>
+                                        </select>
+                                    </div>
+                                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Selecting a type will automatically load the required document checklist below.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Client Name</label>
+                                    <input class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4 placeholder:text-slate-400" placeholder="e.g. PT Properti Jaya / Mr. Budi" type="text"/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Contact Number</label>
+                                    <input class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4 placeholder:text-slate-400" placeholder="+62 812..." type="tel"/>
+                                </div>
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Object Address</label>
+                                    <textarea class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4 placeholder:text-slate-400 resize-none" placeholder="Full address of the property or object..." rows="2"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Target Completion Date</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="material-symbols-outlined text-slate-400 text-[20px]">calendar_today</span>
+                                        </div>
+                                        <input class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 pl-10 pr-4" type="date"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Assigned Notary</label>
+                                    <select class="form-input block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4">
+                                        <option>Dr. Sarah Wijaya, S.H., M.Kn.</option>
+                                        <option>Bambang Santoso, S.H.</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 2: Document Verification (Dynamic) -->
+                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 relative overflow-hidden animate-slide-up" style="animation-delay: 0.2s">
+                            <!-- Left accent border -->
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">fact_check</span>
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Required Documents</h3>
+                                </div>
+                                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">verified_user</span>
+                                    Standard SLA: 3 Days
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <!-- Table Header -->
+                                <div class="grid grid-cols-12 gap-4 pb-2 border-b border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                    <div class="col-span-5 md:col-span-4 pl-2">Document Name</div>
+                                    <div class="col-span-2 text-center">Required</div>
+                                    <div class="col-span-5 md:col-span-6">Status / Notes</div>
+                                </div>
+                                <!-- Item 1 -->
+                                <div class="grid grid-cols-12 gap-4 items-start py-2 group">
+                                    <div class="col-span-5 md:col-span-4 flex items-start gap-3 pl-2">
+                                        <div class="flex h-6 items-center">
+                                            <input checked class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:ring-offset-slate-800" id="doc-ktp" type="checkbox"/>
+                                        </div>
+                                        <div class="text-sm">
+                                            <label class="font-medium text-slate-900 dark:text-white cursor-pointer select-none" for="doc-ktp">KTP (Suami & Istri)</label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Original / Legalized Copy</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 flex justify-center pt-0.5">
+                                        <span class="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10">Mandatory</span>
+                                    </div>
+                                    <div class="col-span-5 md:col-span-6">
+                                        <input class="form-input block w-full rounded-md border-0 bg-slate-50 dark:bg-slate-800 py-1.5 px-3 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 placeholder:text-slate-400 transition-all opacity-60 hover:opacity-100 focus:opacity-100 focus:bg-white dark:focus:bg-slate-900" placeholder="Add note (e.g. Received via courier)" type="text"/>
+                                    </div>
+                                </div>
+                                <!-- Item 2 -->
+                                <div class="grid grid-cols-12 gap-4 items-start py-2 group">
+                                    <div class="col-span-5 md:col-span-4 flex items-start gap-3 pl-2">
+                                        <div class="flex h-6 items-center">
+                                            <input checked class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:ring-offset-slate-800" id="doc-npwp" type="checkbox"/>
+                                        </div>
+                                        <div class="text-sm">
+                                            <label class="font-medium text-slate-900 dark:text-white cursor-pointer select-none" for="doc-npwp">NPWP</label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Valid Tax ID</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 flex justify-center pt-0.5">
+                                        <span class="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10">Mandatory</span>
+                                    </div>
+                                    <div class="col-span-5 md:col-span-6">
+                                        <input class="form-input block w-full rounded-md border-0 bg-slate-50 dark:bg-slate-800 py-1.5 px-3 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 placeholder:text-slate-400 transition-all opacity-60 hover:opacity-100 focus:opacity-100 focus:bg-white dark:focus:bg-slate-900" placeholder="Add note..." type="text"/>
+                                    </div>
+                                </div>
+                                <!-- Item 3 -->
+                                <div class="grid grid-cols-12 gap-4 items-start py-2 group">
+                                    <div class="col-span-5 md:col-span-4 flex items-start gap-3 pl-2">
+                                        <div class="flex h-6 items-center">
+                                            <input class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:ring-offset-slate-800" id="doc-sertifikat" type="checkbox"/>
+                                        </div>
+                                        <div class="text-sm">
+                                            <label class="font-medium text-slate-900 dark:text-white cursor-pointer select-none" for="doc-sertifikat">Original Certificate (SHM/SHGB)</label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Proof of ownership</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 flex justify-center pt-0.5">
+                                        <span class="inline-flex items-center rounded-md bg-red-50 dark:bg-red-900/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10">Mandatory</span>
+                                    </div>
+                                    <div class="col-span-5 md:col-span-6">
+                                        <input class="form-input block w-full rounded-md border-0 bg-amber-50 dark:bg-amber-900/20 py-1.5 px-3 text-amber-900 dark:text-amber-200 shadow-sm ring-1 ring-inset ring-amber-300 dark:ring-amber-700 focus:ring-2 focus:ring-inset focus:ring-amber-500 sm:text-sm sm:leading-6 placeholder:text-slate-400 font-medium" type="text" value="Currently in Bank Custody"/>
+                                        <p class="text-[10px] text-amber-600 dark:text-amber-400 mt-1 pl-1">⚠ Requires "Receipt of Custody" from Bank</p>
+                                    </div>
+                                </div>
+                                <!-- Item 4 -->
+                                <div class="grid grid-cols-12 gap-4 items-start py-2 group">
+                                    <div class="col-span-5 md:col-span-4 flex items-start gap-3 pl-2">
+                                        <div class="flex h-6 items-center">
+                                            <input class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:ring-offset-slate-800" id="doc-pbb" type="checkbox"/>
+                                        </div>
+                                        <div class="text-sm">
+                                            <label class="font-medium text-slate-900 dark:text-white cursor-pointer select-none" for="doc-pbb">PBB (Latest Year)</label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Proof of tax payment</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 flex justify-center pt-0.5">
+                                        <span class="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/20 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 ring-1 ring-inset ring-blue-600/10">Secondary</span>
+                                    </div>
+                                    <div class="col-span-5 md:col-span-6">
+                                        <input class="form-input block w-full rounded-md border-0 bg-slate-50 dark:bg-slate-800 py-1.5 px-3 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 placeholder:text-slate-400 transition-all opacity-60 hover:opacity-100 focus:opacity-100 focus:bg-white dark:focus:bg-slate-900" placeholder="Add note..." type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-center">
+                                <button class="text-xs font-medium text-primary hover:text-primary-dark flex items-center gap-1 transition-colors" type="button">
+                                    <span class="material-symbols-outlined text-[16px]">add</span>
+                                    Add Custom Document Requirement
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Workflow & Actions (1 col) -->
+                    <div class="space-y-6">
+                        <!-- Workflow Preview -->
+                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.3s">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white">Workflow Preview</h3>
+                                <span class="material-symbols-outlined text-slate-400 text-[20px]">timeline</span>
+                            </div>
+                            <div class="relative pl-2">
+                                <!-- Vertical Line -->
+                                <div class="absolute left-[11px] top-2 bottom-4 w-0.5 bg-slate-200 dark:bg-slate-700 z-0"></div>
+                                <ul class="space-y-6 relative z-10">
+                                    <!-- Step 1 (Current) -->
+                                    <li class="workflow-step flex gap-4">
+                                        <div class="flex-shrink-0 size-6 rounded-full bg-primary border-2 border-white dark:border-slate-800 shadow flex items-center justify-center">
+                                            <span class="size-2 rounded-full bg-white animate-pulse"></span>
+                                        </div>
+                                        <div class="pt-0.5">
+                                            <p class="text-sm font-bold text-primary">Data Entry & Verification</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Current Step</p>
+                                        </div>
+                                    </li>
+                                    <!-- Step 2 -->
+                                    <li class="workflow-step flex gap-4 group">
+                                        <div class="flex-shrink-0 size-6 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center group-hover:border-primary transition-colors">
+                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">2</span>
+                                        </div>
+                                        <div class="pt-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Checking (BPN)</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Estimated: 1 Day</p>
+                                        </div>
+                                    </li>
+                                    <!-- Step 3 -->
+                                    <li class="workflow-step flex gap-4 group">
+                                        <div class="flex-shrink-0 size-6 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center group-hover:border-primary transition-colors">
+                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">3</span>
+                                        </div>
+                                        <div class="pt-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tax Validation</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Wait for payment</p>
+                                        </div>
+                                    </li>
+                                    <!-- Step 4 -->
+                                    <li class="workflow-step flex gap-4 group">
+                                        <div class="flex-shrink-0 size-6 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center group-hover:border-primary transition-colors">
+                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">4</span>
+                                        </div>
+                                        <div class="pt-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Signing (Akad)</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">Requires Client Presence</p>
+                                        </div>
+                                    </li>
+                                    <!-- Step 5 -->
+                                    <li class="workflow-step flex gap-4 group">
+                                        <div class="flex-shrink-0 size-6 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center group-hover:border-primary transition-colors">
+                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">5</span>
+                                        </div>
+                                        <div class="pt-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Submission to BPN</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Panel -->
+                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.4s">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Actions</h3>
+                            <div class="flex items-center justify-between mb-6 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">qr_code</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-slate-900 dark:text-white">Client Tracking</span>
+                                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Generate QR & Link</span>
+                                    </div>
+                                </div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input checked class="sr-only peer" type="checkbox" value=""/>
+                                    <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="space-y-3">
+                                <button class="action-button w-full flex justify-center items-center gap-2 rounded-lg bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-4 shadow-sm shadow-primary/30 transition-all active:scale-[0.98]">
+                                    <span class="material-symbols-outlined text-[20px]">save</span>
+                                    Create File & Start Workflow
+                                </button>
+                                <button class="action-button w-full flex justify-center items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-4 transition-all">
+                                    Save as Draft
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer Spacer -->
+            <div class="h-10"></div>
+        </div>
+    </main>
+</div>
+
+<script src="../js/service-requirements.js"></script>
+</body>
+</html>

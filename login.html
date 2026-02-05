@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotaryDoc Pro - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#0A192F',
+                        'primary-blue': '#112240',
+                        'primary-light': '#233554',
+                        'accent-teal': '#64FFDA',
+                        'accent-orange': '#FF9A3D',
+                        'accent-purple': '#9D72FF',
+                        'accent-light': '#8892B0',
+                        'accent-lighter': '#CCD6F6',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                        'fade-in-left': 'fadeInLeft 0.8s ease-out',
+                        'fade-in-right': 'fadeInRight 0.8s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient-shift': 'gradientShift 3s ease infinite',
+                        'blob': 'blob 10s infinite',
+                        'slide-in': 'slideIn 0.5s ease-out',
+                        'bounce-light': 'bounceLight 1s infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        fadeInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        gradientShift: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(0)' },
+                        },
+                        bounceLight: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        },
+                        glow: {
+                            'from': { boxShadow: '0 0 10px #64FFDA, 0 0 20px #64FFDA' },
+                            'to': { boxShadow: '0 0 15px #64FFDA, 0 0 30px #64FFDA' },
+                        }
+                    },
+                    backgroundImage: {
+                        'grid-pattern': 'linear-gradient(to right, rgba(100, 255, 218, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(100, 255, 218, 0.1) 1px, transparent 1px)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles */
+        .gradient-primary {
+            background: linear-gradient(135deg, #0A192F 0%, #112240 50%, #233554 100%);
+        }
+        .gradient-accent {
+            background: linear-gradient(90deg, #64FFDA 0%, #4FD1C7 100%);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.8) 0%, rgba(17, 34, 64, 0.9) 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #64FFDA 0%, #4FD1C7 50%, #38B2AC 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+        .gradient-text-static {
+            background: linear-gradient(90deg, #64FFDA 0%, #4FD1C7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(100, 255, 218, 0.15);
+            border-color: #64FFDA !important;
+        }
+        
+        .auth-button {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .auth-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(100, 255, 218, 0.25);
+        }
+        
+        .role-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .role-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(100, 255, 218, 0.1);
+        }
+        
+        .role-card.selected {
+            border-color: #64FFDA;
+            background: rgba(100, 255, 218, 0.05);
+            box-shadow: 0 10px 25px rgba(100, 255, 218, 0.15);
+        }
+        
+        .error-shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Grid background pattern */
+        .grid-bg {
+            background-image: 
+                linear-gradient(to right, rgba(100, 255, 218, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(100, 255, 218, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        /* Blob animation */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1) 0%, rgba(79, 209, 199, 0.05) 100%);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: blob 20s infinite;
+            filter: blur(40px);
+            z-index: 0;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A192F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #64FFDA 0%, #4FD1C7 100%);
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4FD1C7 0%, #38B2AC 100%);
+        }
+        
+        /* Demo badge */
+        .demo-badge {
+            position: relative;
+            overflow: hidden;
+        }
+        .demo-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 218, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+        
+        /* Role indicator */
+        .role-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        
+        .role-indicator.owner {
+            background-color: #64FFDA;
+            box-shadow: 0 0 8px #64FFDA;
+        }
+        
+        .role-indicator.staff {
+            background-color: #FF9A3D;
+            box-shadow: 0 0 8px #FF9A3D;
+        }
+        
+        .role-indicator.client {
+            background-color: #9D72FF;
+            box-shadow: 0 0 8px #9D72FF;
+        }
+    </style>
+</head>
+<body class="bg-primary-dark text-accent-lighter min-h-screen flex items-center justify-center p-4 relative">
+    <!-- Animated background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-1/4 left-1/4 blob opacity-30"></div>
+        <div class="absolute bottom-1/4 right-1/4 blob opacity-20" style="animation-delay: -5s; width: 600px; height: 600px;"></div>
+        <div class="grid-bg absolute inset-0 opacity-5"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="w-full max-w-4xl relative z-10 animate-fade-in-up">
+        <!-- Logo Section -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex items-center gap-3 text-accent-lighter mb-4 hover:scale-105 transition-transform">
+                <div class="glass-effect p-3 rounded-xl border border-accent-teal/20">
+                    <span class="material-symbols-outlined text-accent-teal text-3xl">gavel</span>
+                </div>
+                <span class="text-accent-lighter font-bold text-2xl">NotaryDoc<span class="gradient-text">Pro</span></span>
+            </a>
+            <div class="inline-flex items-center gap-2 bg-accent-teal/10 text-accent-teal px-4 py-2 rounded-full text-sm font-medium border border-accent-teal/20">
+                <span class="material-symbols-outlined text-base">login</span>
+                Selamat Datang Kembali ke Sistem Terintegrasi
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <div class="glass-effect rounded-2xl shadow-2xl p-8 border border-accent-teal/20 backdrop-blur-sm">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-accent-lighter mb-2">Masuk ke NotaryDoc Pro</h1>
+                <p class="text-accent-light">Pilih peran Anda dan lanjutkan mengelola dokumen dengan efisien</p>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div id="message-container" class="hidden mb-6 p-4 rounded-lg text-sm backdrop-blur-sm border"></div>
+
+            <!-- Role Selection -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-accent-lighter mb-4 text-center">Siapa Anda?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- Owner Role -->
+                    <label class="role-card cursor-pointer">
+                        <input type="radio" name="role" value="owner" class="hidden peer">
+                        <div class="glass-effect p-5 rounded-xl text-center transition-all group peer-checked:border-accent-teal">
+                            <div class="p-3 rounded-full bg-gradient-to-br from-accent-teal/20 to-accent-teal/5 inline-block mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-accent-teal text-2xl">business</span>
+                            </div>
+                            <h3 class="font-bold text-accent-lighter mb-1">Ketua Notaris</h3>
+                            <p class="text-xs text-accent-light">Pemilik kantor notaris</p>
+                            <div class="mt-3 flex items-center justify-center gap-1">
+                                <span class="role-indicator owner"></span>
+                                <span class="text-xs text-accent-teal">Akses Penuh</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Staff Role -->
+                    <label class="role-card cursor-pointer">
+                        <input type="radio" name="role" value="staff" class="hidden peer" checked>
+                        <div class="glass-effect p-5 rounded-xl text-center transition-all group peer-checked:border-accent-orange">
+                            <div class="p-3 rounded-full bg-gradient-to-br from-accent-orange/20 to-accent-orange/5 inline-block mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-accent-orange text-2xl">groups</span>
+                            </div>
+                            <h3 class="font-bold text-accent-lighter mb-1">Staff Administrasi</h3>
+                            <p class="text-xs text-accent-light">Pengelola dokumen & klien</p>
+                            <div class="mt-3 flex items-center justify-center gap-1">
+                                <span class="role-indicator staff"></span>
+                                <span class="text-xs text-accent-orange">Akses Terbatas</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Client Role -->
+                    <label class="role-card cursor-pointer">
+                        <input type="radio" name="role" value="client" class="hidden peer">
+                        <div class="glass-effect p-5 rounded-xl text-center transition-all group peer-checked:border-accent-purple">
+                            <div class="p-3 rounded-full bg-gradient-to-br from-accent-purple/20 to-accent-purple/5 inline-block mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-accent-purple text-2xl">person</span>
+                            </div>
+                            <h3 class="font-bold text-accent-lighter mb-1">Klien</h3>
+                            <p class="text-xs text-accent-light">Pengguna layanan notaris</p>
+                            <div class="mt-3 flex items-center justify-center gap-1">
+                                <span class="role-indicator client"></span>
+                                <span class="text-xs text-accent-purple">Akses Viewer</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-6">
+                <!-- Email Input -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-accent-lighter mb-2">Email</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-accent-light">email</span>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            class="form-input w-full pl-10 pr-4 py-3 bg-primary-dark/50 border border-accent-teal/20 rounded-lg focus:ring-2 focus:ring-accent-teal focus:border-transparent outline-none text-accent-lighter placeholder-accent-light"
+                            placeholder="nama@email.com"
+                        >
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="password" class="block text-sm font-medium text-accent-lighter">Password</label>
+                        <a href="#" class="text-xs gradient-text-static hover:scale-105 transition-transform flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">key</span>
+                            Lupa password?
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-accent-light">lock</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            class="form-input w-full pl-10 pr-12 py-3 bg-primary-dark/50 border border-accent-teal/20 rounded-lg focus:ring-2 focus:ring-accent-teal focus:border-transparent outline-none text-accent-lighter placeholder-accent-light"
+                            placeholder="Masukkan password"
+                        >
+                        <button 
+                            type="button" 
+                            id="togglePassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-accent-light hover:text-accent-teal transition-colors"
+                        >
+                            <span class="material-symbols-outlined text-lg" id="eyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Office Selection (for Staff and Client) -->
+                <div id="officeField" class="hidden">
+                    <label for="officeCode" class="block text-sm font-medium text-accent-lighter mb-2">Kode Kantor Notaris</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-accent-light">business</span>
+                        <input 
+                            type="text" 
+                            id="officeCode" 
+                            name="officeCode"
+                            class="form-input w-full pl-10 pr-4 py-3 bg-primary-dark/50 border border-accent-teal/20 rounded-lg focus:ring-2 focus:ring-accent-teal focus:border-transparent outline-none text-accent-lighter placeholder-accent-light"
+                            placeholder="Masukkan kode kantor (opsional)"
+                        >
+                    </div>
+                    <p class="text-xs text-accent-light mt-2">
+                        <span class="material-symbols-outlined text-xs align-middle">info</span>
+                        Kode kantor diperlukan jika Anda memiliki akses ke beberapa kantor notaris
+                    </p>
+                </div>
+
+                <!-- Remember Me & Options -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="w-4 h-4 text-accent-teal border-accent-teal/30 rounded focus:ring-accent-teal focus:ring-offset-primary-dark bg-primary-dark/50">
+                        <label for="remember" class="ml-2 text-sm text-accent-light">
+                            Ingat saya
+                        </label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="trustedDevice" class="w-4 h-4 text-accent-teal border-accent-teal/30 rounded focus:ring-accent-teal focus:ring-offset-primary-dark bg-primary-dark/50">
+                        <label for="trustedDevice" class="text-sm text-accent-light">
+                            Perangkat terpercaya
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="auth-button w-full gradient-accent text-primary-dark py-3.5 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-accent-teal focus:ring-offset-2 focus:ring-offset-primary-dark flex items-center justify-center gap-2 group"
+                >
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
+                    Masuk ke Dashboard
+                </button>
+            </form>
+
+            <!-- Demo Credentials Info -->
+            <div class="mt-8 p-5 bg-primary-dark/30 rounded-xl border border-accent-teal/10 backdrop-blur-sm demo-badge">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="material-symbols-outlined text-accent-teal text-sm">demo</span>
+                    <p class="text-sm text-accent-teal font-semibold">AKUN DEMO UNTUK TESTING</p>
+                </div>
+                
+                <div class="space-y-3">
+                    <!-- Owner Demo -->
+                    <div class="p-3 bg-primary-dark/50 rounded-lg border border-accent-teal/10 hover:border-accent-teal/30 transition-colors cursor-pointer" onclick="fillCredentials('owner')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-lg bg-gradient-to-br from-accent-teal/20 to-accent-teal/5">
+                                    <span class="material-symbols-outlined text-accent-teal text-sm">business</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-accent-lighter text-sm">Ketua Notaris</p>
+                                    <p class="text-xs text-accent-light">Akses penuh sistem</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-mono text-accent-light">owner@notarydoc.com</p>
+                                <p class="text-xs font-mono text-accent-light">owner123</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Staff Demo -->
+                    <div class="p-3 bg-primary-dark/50 rounded-lg border border-accent-orange/10 hover:border-accent-orange/30 transition-colors cursor-pointer" onclick="fillCredentials('staff')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-lg bg-gradient-to-br from-accent-orange/20 to-accent-orange/5">
+                                    <span class="material-symbols-outlined text-accent-orange text-sm">groups</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-accent-lighter text-sm">Staff Administrasi</p>
+                                    <p class="text-xs text-accent-light">Akses terbatas</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-mono text-accent-light">staff@notarydoc.com</p>
+                                <p class="text-xs font-mono text-accent-light">staff123</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Client Demo -->
+                    <div class="p-3 bg-primary-dark/50 rounded-lg border border-accent-purple/10 hover:border-accent-purple/30 transition-colors cursor-pointer" onclick="fillCredentials('client')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-lg bg-gradient-to-br from-accent-purple/20 to-accent-purple/5">
+                                    <span class="material-symbols-outlined text-accent-purple text-sm">person</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-accent-lighter text-sm">Klien</p>
+                                    <p class="text-xs text-accent-light">Akses viewer</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-mono text-accent-light">client@notarydoc.com</p>
+                                <p class="text-xs font-mono text-accent-light">client123</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-accent-light/60 mt-3 text-center">
+                    Klik salah satu akun demo untuk mengisi otomatis
+                </p>
+            </div>
+
+            <!-- Register & Other Links -->
+            <div class="mt-8 space-y-4">
+                <!-- Register Link -->
+                <div class="text-center pt-4 border-t border-accent-teal/10">
+                    <p class="text-accent-light">
+                        Belum punya akun? 
+                        <a href="daftar.html" class="gradient-text-static font-semibold hover:scale-105 transition-all inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">person_add</span>
+                            Daftar sekarang
+                        </a>
+                    </p>
+                </div>
+                
+                <!-- Client Activation Link -->
+                <div class="text-center">
+                    <p class="text-sm text-accent-light">
+                        Klien baru? 
+                        <a href="aktivasi-klien.html" class="text-accent-purple font-medium hover:scale-105 transition-all inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">verified_user</span>
+                            Aktivasi akun klien
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Info -->
+        <div class="mt-6 text-center">
+            <div class="inline-flex items-center gap-2 text-xs text-accent-light/60">
+                <span class="material-symbols-outlined text-xs animate-bounce-light">shield</span>
+                Sistem keamanan end-to-end untuk melindungi data sensitif notaris
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM Elements - dengan null checking
+        const loginForm = document.getElementById('loginForm');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const messageContainer = document.getElementById('message-container');
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const officeField = document.getElementById('officeField');
+        
+        // Base URL for API
+        const API_BASE_URL = 'http://localhost:3000/api';
+        
+        // Demo credentials data
+        const demoCredentials = {
+            owner: {
+                email: 'owner@notarydoc.com',
+                password: 'owner123',
+                role: 'owner'
+            },
+            staff: {
+                email: 'staff@notarydoc.com',
+                password: 'staff123',
+                role: 'staff'
+            },
+            client: {
+                email: 'client@notarydoc.com',
+                password: 'client123',
+                role: 'client'
+            }
+        };
+        
+        // FUNGSI HELPER UNTUK NULL CHECKING
+        function safeGetElement(id) {
+            const el = document.getElementById(id);
+            if (!el) {
+                console.warn(`Element with id "${id}" not found`);
+            }
+            return el;
+        }
+        
+        // FIX: Inisialisasi dengan null checking
+        if (!loginForm) {
+            console.error('Login form not found!');
+            return; // Hentikan eksekusi jika form tidak ditemukan
+        }
+        
+        // Set default role to staff dengan null checking
+        const staffRadio = document.querySelector('input[name="role"][value="staff"]');
+        if (staffRadio) {
+            staffRadio.checked = true;
+            
+            // Cek apakah parent element ada sebelum mengakses classList
+            const staffCard = staffRadio.parentElement?.querySelector('.role-card');
+            if (staffCard) {
+                staffCard.classList.add('selected');
+            }
+        }
+        
+        // Toggle password visibility dengan null checking
+        if (togglePassword && passwordInput && eyeIcon) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+                eyeIcon.classList.toggle('text-accent-teal');
+            });
+        }
+        
+        // Handle role selection dengan null checking
+        if (roleInputs.length > 0) {
+            roleInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    // Remove selected class from all role cards
+                    document.querySelectorAll('.role-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to current role card dengan null checking
+                    const roleCard = this.parentElement?.querySelector('.role-card');
+                    if (roleCard) {
+                        roleCard.classList.add('selected');
+                    }
+                    
+                    // Show/hide office code field based on role
+                    if (officeField) {
+                        if (this.value === 'staff' || this.value === 'client') {
+                            officeField.classList.remove('hidden');
+                        } else {
+                            officeField.classList.add('hidden');
+                        }
+                    }
+                    
+                    // Auto-fill demo credentials if fields are empty
+                    const emailField = document.getElementById('email');
+                    const passwordField = document.getElementById('password');
+                    
+                    if (emailField && (!emailField.value || emailField.value.includes('@notarydoc.com'))) {
+                        emailField.value = demoCredentials[this.value]?.email || '';
+                    }
+                    
+                    if (passwordField && (!passwordField.value || passwordField.value.includes('123'))) {
+                        passwordField.value = demoCredentials[this.value]?.password || '';
+                    }
+                });
+            });
+        }
+        
+        // Show message function
+        function showMessage(message, isError = false) {
+            if (!messageContainer) {
+                console.log(message);
+                return;
+            }
+            
+            messageContainer.textContent = message;
+            messageContainer.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'bg-green-500/10', 'text-green-400', 'border-red-500/20', 'border-green-500/20', 'error-shake');
+            
+            if (isError) {
+                messageContainer.classList.add('bg-red-500/10', 'text-red-400', 'border-red-500/20', 'error-shake');
+            } else {
+                messageContainer.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
+            }
+            
+            setTimeout(() => {
+                if (messageContainer) {
+                    messageContainer.classList.add('hidden');
+                    messageContainer.classList.remove('error-shake');
+                }
+            }, 3000);
+        }
+        
+        // Login function
+        async function performLogin(email, password, role, officeCode) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        role: role
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Login gagal');
+                }
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Login gagal');
+                }
+                
+                return data.data;
+                
+            } catch (error) {
+                console.error('Login API error:', error);
+                throw error;
+            }
+        }
+        
+        // Handle form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const emailField = document.getElementById('email');
+            const passwordField = document.getElementById('password');
+            const roleRadio = document.querySelector('input[name="role"]:checked');
+            
+            if (!emailField || !passwordField || !roleRadio) {
+                showMessage('Form tidak lengkap!', true);
+                return;
+            }
+            
+            const email = emailField.value.trim();
+            const password = passwordField.value;
+            const role = roleRadio.value;
+            const officeCodeField = document.getElementById('officeCode');
+            const officeCode = officeCodeField ? officeCodeField.value.trim() : '';
+            const remember = document.getElementById('remember')?.checked || false;
+            const trustedDevice = document.getElementById('trustedDevice')?.checked || false;
+            
+            // Basic validation
+            if (!email || !password) {
+                showMessage('Silakan isi email dan password!', true);
+                return;
+            }
+            
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('Format email tidak valid!', true);
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            if (!submitBtn) {
+                showMessage('Error: Tombol submit tidak ditemukan!', true);
+                return;
+            }
+            
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `
+                <span class="material-symbols-outlined animate-spin">refresh</span>
+                Memproses login...
+            `;
+            submitBtn.disabled = true;
+            
+            try {
+                // Perform login
+                const loginData = await performLogin(email, password, role, officeCode);
+                
+                // Login successful
+                showMessage(`🎉 Login berhasil! Mengalihkan ke dashboard...`, false);
+                
+                // Store authentication data
+                const storage = remember ? localStorage : sessionStorage;
+                storage.setItem('access_token', loginData.token);
+                storage.setItem('user_role', loginData.user.role);
+                storage.setItem('user_email', loginData.user.email);
+                storage.setItem('user_id', loginData.user.user_id || loginData.user.id || '');
+                storage.setItem('user_name', loginData.user.name || loginData.user.email.split('@')[0]);
+                storage.setItem('office_id', loginData.user.office_id || '');
+                storage.setItem('is_logged_in', 'true');
+                
+                // Handle demo user
+                if (loginData.user.demo) {
+                    storage.setItem('is_demo_user', 'true');
+                }
+                
+                if (trustedDevice) {
+                    localStorage.setItem('trusted_device', 'true');
+                }
+                
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Add success animation
+                submitBtn.classList.add('animate-pulse', 'bg-green-500/20');
+                setTimeout(() => {
+                    submitBtn.classList.remove('animate-pulse', 'bg-green-500/20');
+                }, 1000);
+                
+                // Redirect to dashboard based on role
+                setTimeout(() => {
+                    redirectToDashboard(role, loginData.user.demo || false);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage(error.message || 'Login gagal. Silakan coba lagi.', true);
+                
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Add error animation to password field
+                if (passwordField) {
+                    passwordField.classList.add('error-shake');
+                    setTimeout(() => {
+                        passwordField.classList.remove('error-shake');
+                    }, 500);
+                }
+            }
+        });
+        
+        // Redirect function
+        function redirectToDashboard(role, isDemo = false) {
+            let redirectUrl = '';
+            
+            if (isDemo) {
+                // Redirect to demo pages
+                const demoPaths = {
+                    owner: './demo/demo_ketua.html',
+                    staff: './demo/demo_staff.html',
+                    client: './demo/demo_client.html'
+                };
+                redirectUrl = demoPaths[role] || './dashboard.html';
+            } else {
+                // Redirect to real dashboard pages
+                const dashboardPaths = {
+                    owner: './html/dashboard.html',
+                    staff: './dashboard/staff.html',
+                    client: './dashboard/client.html'
+                };
+                redirectUrl = dashboardPaths[role] || './dashboard.html';
+            }
+            
+            console.log('Redirecting to:', redirectUrl);
+            window.location.href = redirectUrl;
+        }
+        
+        // Add focus effects to form inputs (jika ada)
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
+        inputs.forEach(input => {
+            const parent = input.parentElement;
+            const icon = parent?.querySelector('.material-symbols-outlined');
+            
+            input.addEventListener('focus', function() {
+                if (parent) {
+                    parent.classList.add('ring-2', 'ring-accent-teal/30');
+                }
+                if (icon) {
+                    icon.classList.add('text-accent-teal');
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                if (parent) {
+                    parent.classList.remove('ring-2', 'ring-accent-teal/30');
+                }
+                if (icon) {
+                    icon.classList.remove('text-accent-teal');
+                }
+            });
+        });
+        
+        // Add hover effects to demo cards (jika ada)
+        const demoCards = document.querySelectorAll('.demo-badge > div > div');
+        demoCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 5px 15px rgba(100, 255, 218, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+        
+        // FIX: Handle URL parameters untuk auto-fill form
+        function handleUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailFromUrl = urlParams.get('email');
+            const passwordFromUrl = urlParams.get('password');
+            const officeCodeFromUrl = urlParams.get('officeCode');
+            
+            if (emailFromUrl) {
+                const emailField = document.getElementById('email');
+                if (emailField) {
+                    emailField.value = decodeURIComponent(emailFromUrl);
+                }
+            }
+            
+            if (passwordFromUrl) {
+                const passwordField = document.getElementById('password');
+                if (passwordField) {
+                    passwordField.value = decodeURIComponent(passwordFromUrl);
+                }
+            }
+            
+            if (officeCodeFromUrl) {
+                const officeCodeField = document.getElementById('officeCode');
+                if (officeCodeField) {
+                    officeCodeField.value = decodeURIComponent(officeCodeFromUrl);
+                }
+            }
+            
+            // Auto-submit jika ada semua parameter
+            if (emailFromUrl && passwordFromUrl) {
+                setTimeout(() => {
+                    // Auto-klik tombol submit
+                    const submitBtn = loginForm?.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        showMessage('Mengisi data dari URL...', false);
+                        setTimeout(() => {
+                            loginForm?.dispatchEvent(new Event('submit'));
+                        }, 1000);
+                    }
+                }, 500);
+            }
+        }
+        
+        // Panggil fungsi untuk handle URL parameters
+        handleUrlParameters();
+    });
+    
+    // Global function to fill demo credentials and redirect to demo page
+    function fillCredentials(role) {
+        const credentials = {
+            owner: { email: 'owner@notarydoc.com', password: 'owner123' },
+            staff: { email: 'staff@notarydoc.com', password: 'staff123' },
+            client: { email: 'client@notarydoc.com', password: 'client123' }
+        };
+        
+        // Set email and password
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        
+        if (emailField) {
+            emailField.value = credentials[role]?.email || '';
+        }
+        
+        if (passwordField) {
+            passwordField.value = credentials[role]?.password || '';
+        }
+        
+        // Set role radio button
+        const roleInput = document.querySelector(`input[name="role"][value="${role}"]`);
+        if (roleInput) {
+            roleInput.checked = true;
+            roleInput.dispatchEvent(new Event('change'));
+        }
+        
+        // Show feedback
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+            messageContainer.textContent = `✅ Kredensial demo ${role} telah dimasukkan! Mengalihkan ke halaman demo...`;
+            messageContainer.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20');
+            messageContainer.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
+        }
+        
+        // Auto-submit after 1 second
+        setTimeout(() => {
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        }, 1000);
+    }
+    
+    // Function to check if user is logged in (use in dashboard pages)
+    async function checkAuth() {
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        
+        if (!token) {
+            window.location.href = 'login.html';
+            return null;
+        }
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok || !data.success) {
+                throw new Error('Authentication failed');
+            }
+            
+            return data.data;
+            
+        } catch (error) {
+            console.error('Auth check error:', error);
+            // Clear stored auth data
+            localStorage.removeItem('access_token');
+            sessionStorage.removeItem('access_token');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('is_logged_in');
+            
+            window.location.href = 'login.html';
+            return null;
+        }
+    }
+    
+    // Function to logout (use in dashboard pages)
+    function logout() {
+        // Clear all stored data
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Optional: Call backend logout endpoint
+        fetch('http://localhost:3000/api/auth/logout', {
+            method: 'POST'
+        }).catch(console.error);
+        
+        // Redirect to login
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

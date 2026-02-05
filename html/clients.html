@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NotaryDoc Tracker - Clients</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f96ad",
+                        "primary-dark": "#166e80",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#121e20",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c2e",
+                        "alert-red": "#dc2626",
+                        "alert-bg": "#fef2f2",
+                        "success-green": "#10b981",
+                        "warning-yellow": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+        .sidebar-link.active {
+            background-color: #e8f0f2;
+            color: #1f96ad;
+        }
+        .dark .sidebar-link.active {
+            background-color: rgba(31, 150, 173, 0.2);
+            color: #1f96ad;
+        }
+        /* Custom scrollbar for table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .client-row {
+            transition: all 0.2s ease;
+        }
+        .client-row:hover {
+            transform: scale(1.01);
+        }
+        .client-card {
+            transition: all 0.3s ease;
+        }
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .action-button {
+            transition: all 0.2s ease;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-indicator {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #1f96ad;
+            color: #1f96ad;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="hidden w-64 flex-col border-r border-slate-200 bg-surface-light dark:border-slate-800 dark:bg-surface-dark lg:flex">
+        <div class="flex h-16 items-center gap-3 border-b border-slate-100 px-6 dark:border-slate-800">
+            <div class="flex items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary">
+                <span class="material-symbols-outlined">history_edu</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">NotaryDoc</span>
+        </div>
+        <div class="flex flex-1 flex-col justify-between p-4">
+            <nav class="space-y-1">
+                <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu</div>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="dashboard.html">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="new_file.html">
+                    <span class="material-symbols-outlined text-[20px]">note_add</span>
+                    New File
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="all_files.html">
+                    <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                    All Files
+                </a>
+                <a class="sidebar-link active flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors" href="clients.html">
+                    <span class="material-symbols-outlined text-[20px]">group</span>
+                    Clients
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="reports.html">
+                    <span class="material-symbols-outlined text-[20px]">analytics</span>
+                    Reports
+                </a>
+            </nav>
+            <div class="flex flex-col gap-4">
+                <nav class="space-y-1">
+                    <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">System</div>
+                    <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="#">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                        Settings
+                    </a>
+                </nav>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+                    <div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200" data-alt="User profile picture showing a smiling professional woman">
+                        <img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxVNWhQG_W_ed3cfYulehqFgy1zHjDMMIjmROUMwH1GdQ_-0YSFkCDbhAUraVspPkQuL0OxU4dpVlRtthPZjLgeYBHkvhbel0_QFpjzjajgl5twyaTdmLKvqyYVPWymWFDcQYNKWMkw6jaECoHtTlY5zsE3Cd5YLdUFJEX3Iz8WFCIdH6sH7N9wTapvHPoggn6meeaInC7hTPiKLsDjeY9KtEQzcjbvxSR5QU8MOMweu2luT32b5p7neJyxE0brTANOuECjzNuvegc"/>
+                    </div>
+                    <div class="flex flex-1 flex-col overflow-hidden">
+                        <span class="truncate text-sm font-bold text-slate-900 dark:text-white">Sarah W.</span>
+                        <span class="truncate text-xs text-slate-500 dark:text-slate-400">Notary Lead</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex h-full flex-1 flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-surface-light px-6 dark:border-slate-800 dark:bg-surface-dark">
+            <div class="lg:hidden">
+                <button class="flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex w-full items-center justify-between gap-6">
+                <h1 class="hidden text-xl font-bold text-slate-900 dark:text-white sm:block">Clients</h1>
+                <div class="flex items-center gap-4">
+                    <!-- Search Box -->
+                    <div class="hidden md:block relative w-80">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
+                        <input id="searchInput" class="h-10 w-full rounded-lg border-none bg-slate-100 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white dark:placeholder-slate-400" placeholder="Search clients..." type="text"/>
+                    </div>
+                    <!-- Notification Button -->
+                    <button class="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <span class="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-400">notifications</span>
+                        <span class="status-indicator absolute top-1 right-1 h-2 w-2 rounded-full bg-alert-red"></span>
+                    </button>
+                    <!-- Add Client Button -->
+                    <button id="addClientBtn" class="action-button flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-dark hover:shadow-md active:scale-95">
+                        <span class="material-symbols-outlined text-[20px]">person_add</span>
+                        <span class="hidden sm:inline">Add Client</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar bg-background-light p-6 dark:bg-background-dark animate-fade-in">
+            <div class="mx-auto max-w-7xl space-y-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 animate-slide-up">
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Total Clients</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">247</p>
+                            </div>
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">groups</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Individuals</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">189</p>
+                            </div>
+                            <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-green-600 dark:text-green-400">person</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Companies</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">58</p>
+                            </div>
+                            <div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">business</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">New This Month</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">12</p>
+                            </div>
+                            <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400">trending_up</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="border-b border-slate-200 dark:border-slate-800">
+                        <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                            <button class="tab-button active py-4 px-1 text-sm font-medium text-slate-900 dark:text-white" data-tab="all">
+                                All Clients
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="individuals">
+                                Individuals
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="companies">
+                                Companies
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="recent">
+                                Recent Activity
+                            </button>
+                        </nav>
+                    </div>
+                    
+                    <!-- Tab Content -->
+                    <div class="p-6">
+                        <!-- All Clients Tab -->
+                        <div id="all-tab" class="tab-content">
+                            <!-- Filter Section -->
+                            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Filter by:</span>
+                                    <button class="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                        All Types
+                                    </button>
+                                    <button class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600">
+                                        Active Files
+                                    </button>
+                                    <button class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600">
+                                        No Files
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="text-xs text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px]">download</span>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Clients Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
+                                        <tr>
+                                            <th class="px-6 py-4">Client</th>
+                                            <th class="px-6 py-4">Contact</th>
+                                            <th class="px-6 py-4">Type</th>
+                                            <th class="px-6 py-4">Total Files</th>
+                                            <th class="px-6 py-4">Last Activity</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                        <!-- Client Row 1 -->
+                                        <tr class="client-row group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm font-bold dark:bg-blue-900 dark:text-blue-200">BS</div>
+                                                    <div>
+                                                        <p class="font-medium text-slate-900 dark:text-white">Budi Santoso</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">ID: CLI-001</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="text-slate-900 dark:text-white">+62 812-3456-7890</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">budi@email.com</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">Individual</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="font-medium text-slate-900 dark:text-white">3</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">2 Active</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm text-slate-900 dark:text-white">2 days ago</div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                                    Active
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">visibility</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">edit</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">more_vert</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Client Row 2 -->
+                                        <tr class="client-row group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-sm font-bold dark:bg-purple-900 dark:text-purple-300">PT</div>
+                                                    <div>
+                                                        <p class="font-medium text-slate-900 dark:text-white">PT. Maju Jaya</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">ID: CLI-002</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="text-slate-900 dark:text-white">+62 21-555-1234</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">info@majujaya.com</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-md bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">Company</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="font-medium text-slate-900 dark:text-white">7</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">3 Active</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm text-slate-900 dark:text-white">1 week ago</div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                                                    Pending
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">visibility</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">edit</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">more_vert</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Client Row 3 -->
+                                        <tr class="client-row group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-sm font-bold dark:bg-orange-900 dark:text-orange-200">DL</div>
+                                                    <div>
+                                                        <p class="font-medium text-slate-900 dark:text-white">Dewi Lestari</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">ID: CLI-003</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="text-slate-900 dark:text-white">+62 813-9876-5432</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">dewi.les@email.com</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">Individual</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="font-medium text-slate-900 dark:text-white">2</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">1 Active</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm text-slate-900 dark:text-white">3 days ago</div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                                    Active
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">visibility</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">edit</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">more_vert</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Client Row 4 -->
+                                        <tr class="client-row group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-sm font-bold dark:bg-teal-900 dark:text-teal-200">CV</div>
+                                                    <div>
+                                                        <p class="font-medium text-slate-900 dark:text-white">CV. Abadi Sentosa</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">ID: CLI-004</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="text-slate-900 dark:text-white">+62 22-765-4321</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">admin@abadi.co.id</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-md bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">Company</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm">
+                                                    <p class="font-medium text-slate-900 dark:text-white">5</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">2 Active</p>
+                                                </div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <div class="text-sm text-slate-900 dark:text-white">2 weeks ago</div>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                                                    Inactive
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">visibility</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">edit</span>
+                                                </button>
+                                                <button class="action-button p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                    <span class="material-symbols-outlined text-[18px] text-slate-600 dark:text-slate-400">more_vert</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <div class="flex items-center justify-between border-t border-slate-200 px-6 py-4 dark:border-slate-800 mt-4">
+                                <div class="text-sm text-slate-500 dark:text-slate-400">
+                                    Showing <span class="font-medium text-slate-900 dark:text-white">1</span> to <span class="font-medium text-slate-900 dark:text-white">4</span> of <span class="font-medium text-slate-900 dark:text-white">247</span> results
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700" disabled="">
+                                        Previous
+                                    </button>
+                                    <button class="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Other tabs (hidden by default) -->
+                        <div id="individuals-tab" class="tab-content hidden">
+                            <div class="text-center py-12">
+                                <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">person</span>
+                                <p class="mt-4 text-lg font-medium text-slate-900 dark:text-white">Individual Clients</p>
+                                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing 189 individual clients</p>
+                            </div>
+                        </div>
+                        
+                        <div id="companies-tab" class="tab-content hidden">
+                            <div class="text-center py-12">
+                                <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">business</span>
+                                <p class="mt-4 text-lg font-medium text-slate-900 dark:text-white">Company Clients</p>
+                                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing 58 company clients</p>
+                            </div>
+                        </div>
+                        
+                        <div id="recent-tab" class="tab-content hidden">
+                            <div class="text-center py-12">
+                                <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">history</span>
+                                <p class="mt-4 text-lg font-medium text-slate-900 dark:text-white">Recent Activity</p>
+                                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Clients with recent file activity</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer Spacer -->
+            <div class="h-10"></div>
+        </div>
+    </main>
+    
+    <!-- Add Client Modal -->
+    <div id="addClientModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-xl w-full max-w-md mx-4 animate-slide-up">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Add New Client</h3>
+                <button id="closeModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">close</span>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Client Type</label>
+                    <select class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4">
+                        <option>Individual</option>
+                        <option>Company</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name / Company Name</label>
+                    <input type="text" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" placeholder="Enter name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Phone Number</label>
+                    <input type="tel" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" placeholder="+62 812-3456-7890">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email Address</label>
+                    <input type="email" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Address</label>
+                    <textarea class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" rows="3" placeholder="Enter address"></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+                <button id="cancelModalBtn" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700">
+                    Cancel
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark">
+                    Add Client
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Update button states
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-300');
+                    btn.classList.remove('text-slate-900', 'dark:text-white');
+                });
+                
+                this.classList.add('active');
+                this.classList.remove('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-300');
+                this.classList.add('text-slate-900', 'dark:text-white');
+                
+                // Show/hide tab content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                document.getElementById(`${targetTab}-tab`).classList.remove('hidden');
+            });
+        });
+        
+        // Modal functionality
+        const addClientBtn = document.getElementById('addClientBtn');
+        const addClientModal = document.getElementById('addClientModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        
+        function openModal() {
+            addClientModal.classList.remove('hidden');
+            addClientModal.classList.add('flex');
+        }
+        
+        function closeModal() {
+            addClientModal.classList.add('hidden');
+            addClientModal.classList.remove('flex');
+        }
+        
+        addClientBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        addClientModal.addEventListener('click', function(e) {
+            if (e.target === addClientModal) {
+                closeModal();
+            }
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const clientRows = document.querySelectorAll('.client-row');
+                
+                clientRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Add interactivity to action buttons
+        const actionButtons = document.querySelectorAll('.action-button');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const icon = this.querySelector('.material-symbols-outlined').textContent;
+                
+                if (icon === 'visibility') {
+                    // Navigate to client details
+                    console.log('View client details');
+                } else if (icon === 'edit') {
+                    // Navigate to edit client
+                    console.log('Edit client');
+                } else if (icon === 'more_vert') {
+                    // Show more options
+                    console.log('Show more options');
+                }
+            });
+        });
+        
+        // Add click event to client rows
+        const clientRows = document.querySelectorAll('.client-row');
+        clientRows.forEach(row => {
+            row.addEventListener('click', function() {
+                const clientName = this.querySelector('td:first-child p').textContent;
+                console.log(`Opening details for ${clientName}...`);
+                // In a real app, this would navigate to client details
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NotaryDoc Client Portal - Pelacakan Dokumen Notaris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f96ad",
+                        "primary-dark": "#166e80",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#121e20",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c2e",
+                        "alert-red": "#dc2626",
+                        "alert-bg": "#fef2f2",
+                        "success-green": "#10b981",
+                        "warning-yellow": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .file-row {
+            transition: all 0.2s ease;
+        }
+        .file-row:hover {
+            transform: scale(1.01);
+        }
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+        .file-card {
+            transition: all 0.3s ease;
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #1f96ad;
+            color: #1f96ad;
+        }
+        .progress-fill {
+            transition: width 1s ease-in-out;
+        }
+        .status-indicator {
+            animation: pulse 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-20deg); }
+            100% { transform: translateX(200%) skewX(-20deg); }
+        }
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
+        }
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        /* Hide all pages by default */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        /* File upload area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #1f96ad;
+            background-color: rgba(31, 150, 173, 0.1);
+        }
+        /* Timeline */
+        .timeline-item {
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden w-64 flex-col border-r border-slate-200 bg-surface-light dark:border-slate-800 dark:bg-surface-dark lg:flex">
+        <div class="flex h-16 items-center gap-3 border-b border-slate-100 px-6 dark:border-slate-800">
+            <div class="flex items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary">
+                <span class="material-symbols-outlined">history_edu</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">NotaryDoc</span>
+        </div>
+        <div class="flex flex-1 flex-col justify-between p-4">
+            <nav class="space-y-1">
+                <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu</div>
+                <a class="sidebar-link active flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors" data-page="dashboard" href="#">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" data-page="all_files" href="#">
+                    <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                    Semua File
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" data-page="profile" href="#">
+                    <span class="material-symbols-outlined text-[20px]">account_circle</span>
+                    Profil Saya
+                </a>
+            </nav>
+            <div class="flex flex-col gap-4">
+                <nav class="space-y-1">
+                    <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sistem</div>
+                    <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="#" id="darkModeToggle">
+                        <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+                        Mode Gelap
+                    </a>
+                    <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="#" id="logoutBtn">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                        Keluar
+                    </a>
+                </nav>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+                    <div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200" data-alt="Foto profil pengguna">
+                        <img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxVNWhQG_W_ed3cfYulehqFgy1zHjDMMIjmROUMwH1GdQ_-0YSFkCDbhAUraVspPkQuL0OxU4dpVlRtthPZjLgeYBHkvhbel0_QFpjzjajgl5twyaTdmLKvqyYVPWymWFDcQYNKWMkw6jaECoHtTlY5zsE3Cd5YLdUFJEX3Iz8WFCIdH6sH7N9wTapvHPoggn6meeaInC7hTPiKLsDjeY9KtEQzcjbvxSR5QU8MOMweu2luT32b5p7neJyxE0brTANOuECjzNuvegc"/>
+                    </div>
+                    <div class="flex flex-1 flex-col overflow-hidden">
+                        <span id="clientName" class="truncate text-sm font-bold text-slate-900 dark:text-white">Budi Santoso</span>
+                        <span class="truncate text-xs text-slate-500 dark:text-slate-400">Klien</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex h-full flex-1 flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-surface-light px-6 dark:border-slate-800 dark:bg-surface-dark">
+            <div class="lg:hidden">
+                <button id="mobileMenuToggle" class="flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex w-full items-center justify-between gap-6">
+                <h1 id="pageTitle" class="hidden text-xl font-bold text-slate-900 dark:text-white sm:block">Dashboard</h1>
+                <div class="flex items-center gap-4">
+                    <!-- Notification Button -->
+                    <button id="notificationBtn" class="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <span class="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-400">notifications</span>
+                        <span id="notificationBadge" class="notification-badge absolute top-1 right-1 h-2 w-2 rounded-full bg-alert-red"></span>
+                    </button>
+                    <!-- Contact Support Button -->
+                    <button id="contactSupportBtn" class="action-button flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all">
+                        <span class="material-symbols-outlined text-[20px]">support_agent</span>
+                        <span class="hidden sm:inline">Hubungi Kami</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Scrollable Content -->
+        <div id="contentArea" class="flex-1 overflow-y-auto custom-scrollbar bg-background-light p-6 dark:bg-background-dark animate-fade-in">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="mx-auto max-w-7xl space-y-8">
+                    <!-- Welcome Message -->
+                    <div class="bg-gradient-to-r from-primary to-primary-dark rounded-xl p-6 text-white shadow-lg animate-slide-up">
+                        <h2 class="text-2xl font-bold mb-2">Selamat Datang, <span id="welcomeName">Budi Santoso</span>!</h2>
+                        <p class="opacity-90">Pantau status dokumen notaris Anda dan unggah dokumen yang diperlukan dengan mudah.</p>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <!-- Active Files -->
+                        <div class="file-card group relative overflow-hidden rounded-xl bg-surface-light p-6 shadow-sm dark:bg-surface-dark border border-slate-200 dark:border-slate-700">
+                            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 translate-y-[-10px] opacity-5">
+                                <span class="material-symbols-outlined text-9xl text-primary">folder_open</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-sm font-medium text-slate-500 dark:text-slate-400">File Aktif</span>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="activeFilesCount" class="text-3xl font-bold text-slate-900 dark:text-white">3</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
+                                <div class="h-1.5 rounded-full bg-primary" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <!-- Pending Documents -->
+                        <div class="file-card group relative overflow-hidden rounded-xl bg-surface-light p-6 shadow-sm dark:bg-surface-dark border border-slate-200 dark:border-slate-700">
+                            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 translate-y-[-10px] opacity-5">
+                                <span class="material-symbols-outlined text-9xl text-warning-yellow">pending_actions</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Dokumen Pending</span>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="pendingDocsCount" class="text-3xl font-bold text-slate-900 dark:text-white">2</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
+                                <div class="h-1.5 rounded-full bg-warning-yellow" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <!-- Completed Files -->
+                        <div class="file-card group relative overflow-hidden rounded-xl bg-surface-light p-6 shadow-sm dark:bg-surface-dark border border-slate-200 dark:border-slate-700">
+                            <div class="absolute right-0 top-0 h-24 w-24 translate-x-8 translate-y-[-10px] opacity-5">
+                                <span class="material-symbols-outlined text-9xl text-success-green">task_alt</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-sm font-medium text-slate-500 dark:text-slate-400">File Selesai</span>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="completedFilesCount" class="text-3xl font-bold text-slate-900 dark:text-white">5</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
+                                <div class="h-1.5 rounded-full bg-success-green" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Files -->
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">File Terkini</h2>
+                            <a href="#" class="text-sm text-primary hover:text-primary-dark" data-page="all_files">Lihat Semua</a>
+                        </div>
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- File items will be populated by JavaScript -->
+                            <div id="recentFilesList" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <!-- Recent file items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Files Page -->
+            <div id="all_files" class="page">
+                <div class="mx-auto max-w-7xl space-y-6">
+                    <!-- Filter Section -->
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-4 border border-slate-200 dark:border-slate-700 animate-slide-up">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Filter:</span>
+                                <button class="filter-chip px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium" data-filter="all">
+                                    Semua Status
+                                </button>
+                                <button class="filter-chip px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600" data-filter="in-progress">
+                                    Dalam Proses
+                                </button>
+                                <button class="filter-chip px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600" data-filter="pending">
+                                    Menunggu Dokumen
+                                </button>
+                                <button class="filter-chip px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600" data-filter="completed">
+                                    Selesai
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Files Grid -->
+                    <div id="filesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- File cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Details Page -->
+            <div id="file_details" class="page">
+                <div class="w-full max-w-5xl mx-auto px-4 pb-12">
+                    <!-- File Status Card -->
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-subtle-lift overflow-hidden border border-slate-100 dark:border-slate-800 relative z-10 animate-slide-up">
+                        <!-- File Identity Block -->
+                        <div class="p-6 md:p-10 border-b border-slate-100 dark:border-slate-700/50">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider">File Saya</span>
+                                        <span id="fileTypeBadge" class="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">SKMHT</span>
+                                    </div>
+                                    <h1 id="fileId" class="text-text-main-light dark:text-text-main-dark text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">File #2024/05/042</h1>
+                                    <div class="flex items-center gap-2 mt-2 text-text-muted-light dark:text-slate-400">
+                                        <span class="material-symbols-outlined text-lg">description</span>
+                                        <span id="fileServiceType" class="text-base font-medium">SKMHT (Surat Kuasa Membebankan Hak Tanggungan)</span>
+                                    </div>
+                                </div>
+                                <div class="shrink-0 text-right hidden md:block">
+                                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Terakhir Diperbarui</p>
+                                    <p id="fileLastUpdated" class="text-sm font-bold text-text-main-light dark:text-text-main-dark">28 Sep 2024</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Visual Progress Indicator -->
+                        <div class="px-6 md:px-10 py-8 bg-slate-50/50 dark:bg-slate-800/20">
+                            <div class="flex flex-col gap-4">
+                                <div class="flex justify-between items-end">
+                                    <div>
+                                        <p class="text-text-main-light dark:text-text-main-dark text-lg font-bold">Penyelesaian Keseluruhan</p>
+                                        <p id="fileEstCompletion" class="text-text-muted-light dark:text-slate-400 text-sm">Perkiraan selesai pada 12 Oct 2024</p>
+                                    </div>
+                                    <p id="fileProgressPercent" class="text-primary text-3xl font-extrabold tracking-tight">40%</p>
+                                </div>
+                                <div class="relative h-4 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden shadow-inner">
+                                    <div id="fileProgressBar" class="progress-fill absolute top-0 left-0 h-full rounded-full bg-gradient-to-r from-primary to-[#2abcc8] shadow-[0_0_12px_rgba(31,150,173,0.6)]" style="width: 40%;">
+                                        <div class="absolute inset-0 bg-white/20 w-full h-full animate-shimmer" style="background-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); transform: skewX(-20deg);"></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">
+                                    <span>Dimulai</span>
+                                    <span>Dalam Proses</span>
+                                    <span>Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Current Stage Highlight -->
+                        <div class="p-6 md:p-10">
+                            <div class="flex flex-col md:flex-row gap-6 items-stretch">
+                                <!-- Status Card -->
+                                <div class="flex-1 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-5 shadow-card flex flex-col gap-3 relative overflow-hidden group hover-lift">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="relative flex h-3 w-3">
+                                            <span class="status-indicator absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                        </span>
+                                        <span class="text-primary text-sm font-bold uppercase tracking-wider">Tahap Saat Ini</span>
+                                    </div>
+                                    <div>
+                                        <h3 id="fileCurrentStage" class="text-text-main-light dark:text-text-main-dark text-xl font-bold mb-2">Penyusunan Draf</h3>
+                                        <p id="fileStageDescription" class="text-text-muted-light dark:text-slate-400 text-sm leading-relaxed">
+                                            Kami sedang menyusun draf akta berdasarkan informasi yang telah Anda berikan. Proses ini biasanya memakan waktu 1-2 hari kerja.
+                                        </p>
+                                    </div>
+                                    <div class="mt-auto pt-4 flex items-center gap-2 text-xs text-slate-400">
+                                        <span class="material-symbols-outlined text-sm">schedule</span>
+                                        <span id="fileStageStarted">Dimulai 2 hari yang lalu</span>
+                                    </div>
+                                </div>
+                                <!-- Action Card -->
+                                <div class="w-full md:w-80 shrink-0 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-5 shadow-card group hover-lift">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Tindakan</h3>
+                                    <div class="space-y-3">
+                                        <button id="uploadDocBtn" class="action-button w-full flex justify-center items-center gap-2 rounded-lg bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-4 shadow-sm shadow-primary/30 transition-all active:scale-[0.98]">
+                                            <span class="material-symbols-outlined text-[20px]">upload_file</span>
+                                            Unggah Dokumen
+                                        </button>
+                                        <button id="downloadDocBtn" class="action-button w-full flex justify-center items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-4 transition-all">
+                                            <span class="material-symbols-outlined text-[20px]">download</span>
+                                            Unduh Dokumen
+                                        </button>
+                                        <button id="contactNotaryBtn" class="action-button w-full flex justify-center items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-4 transition-all">
+                                            <span class="material-symbols-outlined text-[20px]">contact_support</span>
+                                            Hubungi Notaris
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Document Requirements -->
+                        <div class="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 p-6 md:p-10">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Dokumen yang Diperlukan</h3>
+                                <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">verified_user</span>
+                                    <span id="docStatusCount">2 dari 5 dokumen</span>
+                                </div>
+                            </div>
+                            <div id="documentRequirements" class="space-y-4">
+                                <!-- Document items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <!-- Timeline -->
+                        <div class="px-6 md:px-10 py-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/20">
+                            <button id="toggleTimeline" class="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors w-full justify-center group">
+                                <span>Lihat Riwayat Lengkap</span>
+                                <span class="material-symbols-outlined text-lg transition-transform group-hover:translate-y-0.5">expand_more</span>
+                            </button>
+                            <div id="timelineContent" class="hidden mt-6 space-y-4">
+                                <!-- Timeline items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile" class="page">
+                <div class="mx-auto max-w-4xl space-y-6">
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 animate-slide-up">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Profil Saya</h2>
+                        
+                        <!-- Profile Info -->
+                        <div class="flex flex-col md:flex-row gap-6 mb-8">
+                            <div class="flex-shrink-0">
+                                <div class="h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                                    <span id="profileInitials" class="text-3xl font-bold text-slate-500 dark:text-slate-400">BS</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 id="profileName" class="text-xl font-bold text-slate-900 dark:text-white mb-2">Budi Santoso</h3>
+                                <p id="profileEmail" class="text-slate-600 dark:text-slate-400 mb-4">budi@email.com</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Nomor Telepon</p>
+                                        <p id="profilePhone" class="font-medium text-slate-900 dark:text-white">+62 812-3456-7890</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Alamat</p>
+                                        <p id="profileAddress" class="font-medium text-slate-900 dark:text-white">Jl. Gatot Subroto No. 456, Jakarta Selatan</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Profile Button -->
+                        <div class="flex justify-end">
+                            <button id="editProfileBtn" class="action-button flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                                Edit Profil
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Settings -->
+                    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.1s">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Pengaturan Akun</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <p class="font-medium text-slate-900 dark:text-white">Notifikasi Email</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Terima pembaruan status file melalui email</p>
+                                </div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input checked class="sr-only peer" type="checkbox" value=""/>
+                                    <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <p class="font-medium text-slate-900 dark:text-white">Notifikasi SMS</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Terima pembaruan status file melalui SMS</p>
+                                </div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input class="sr-only peer" type="checkbox" value=""/>
+                                    <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <p class="font-medium text-slate-900 dark:text-white">Bahasa</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Pilih bahasa tampilan</p>
+                                </div>
+                                <select class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2 px-3 text-sm">
+                                    <option>Bahasa Indonesia</option>
+                                    <option>English</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-3">
+                                <div>
+                                    <p class="font-medium text-slate-900 dark:text-white">Ubah Kata Sandi</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Perbarui kata sandi akun Anda</p>
+                                </div>
+                                <button id="changePasswordBtn" class="text-sm font-medium text-primary hover:text-primary-dark">
+                                    Ubah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Upload Document Modal -->
+<div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-xl w-full max-w-md mx-4 animate-slide-up">
+        <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Unggah Dokumen</h3>
+            <button id="closeUploadModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Jenis Dokumen</label>
+                <select id="docTypeSelect" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4">
+                    <option>Pilih jenis dokumen</option>
+                    <option>KTP</option>
+                    <option>NPWP</option>
+                    <option>Sertifikat Asli</option>
+                    <option>PBB</option>
+                    <option>Surat Kuasa</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Pilih File</label>
+                <div id="uploadArea" class="upload-area rounded-lg p-6 text-center cursor-pointer">
+                    <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Klik untuk memilih atau seret file ke sini</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">PDF, JPG, PNG (maks. 10MB)</p>
+                    <input id="fileInput" type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+                <div id="selectedFiles" class="mt-4 space-y-2">
+                    <!-- Selected files will be displayed here -->
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Catatan (opsional)</label>
+                <textarea id="docNotes" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" rows="3" placeholder="Tambahkan catatan untuk notaris..."></textarea>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+            <button id="cancelUploadBtn" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700">
+                Batal
+            </button>
+            <button id="submitUploadBtn" class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark">
+                Unggah
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Panel -->
+<div id="notificationPanel" class="fixed top-16 right-6 w-80 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 hidden z-40 animate-slide-up">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Notifikasi</h3>
+        <button id="closeNotificationBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">close</span>
+        </button>
+    </div>
+    <div id="notificationList" class="space-y-3 max-h-96 overflow-y-auto">
+        <!-- Notifications will be populated by JavaScript -->
+    </div>
+</div>
+
+<!-- Contact Support Modal -->
+<div id="contactSupportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-xl w-full max-w-md mx-4 animate-slide-up">
+        <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Hubungi Kami</h3>
+            <button id="closeSupportModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Subjek</label>
+                <input id="supportSubject" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" placeholder="Subjek pesan">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Pesan</label>
+                <textarea id="supportMessage" class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary py-2.5 px-4" rows="4" placeholder="Jelaskan pertanyaan atau masalah Anda..."></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">File (opsional)</label>
+                <div class="flex items-center gap-2 p-3 border border-dashed border-slate-300 dark:border-slate-600 rounded-lg">
+                    <span class="material-symbols-outlined text-slate-400">attach_file</span>
+                    <span class="text-sm text-slate-600 dark:text-slate-400">Seret file ke sini atau klik untuk memilih</span>
+                    <input type="file" class="hidden">
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+            <button id="cancelSupportBtn" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700">
+                Batal
+            </button>
+            <button id="submitSupportBtn" class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark">
+                Kirim
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data Storage
+    let appData = {
+        client: {
+            id: "CLI-001",
+            name: "Budi Santoso",
+            email: "budi@email.com",
+            phone: "+62 812-3456-7890",
+            address: "Jl. Gatot Subroto No. 456, Jakarta Selatan"
+        },
+        files: [
+            {
+                id: "2024/05/042",
+                serviceType: "AJB",
+                serviceName: "Akta Pengikatan Jual Beli",
+                progress: 40,
+                status: "In Progress",
+                estimatedCompletion: "12 Oct 2024",
+                currentStage: "Drafting",
+                stageDescription: "Kami sedang menyusun draf akta berdasarkan informasi yang telah Anda berikan. Proses ini biasanya memakan waktu 1-2 hari kerja.",
+                stageStarted: "2 hari yang lalu",
+                lastUpdated: "28 Sep 2024",
+                documents: [
+                    { name: "KTP", required: true, uploaded: true },
+                    { name: "NPWP", required: true, uploaded: true },
+                    { name: "Sertifikat Asli", required: true, uploaded: false },
+                    { name: "PBB", required: true, uploaded: false },
+                    { name: "Surat Kuasa", required: false, uploaded: false }
+                ],
+                timeline: [
+                    { date: "20 Sep 2024", title: "Pengajuan Dokumen", description: "Semua dokumen yang diperlukan diterima dan diverifikasi", status: "completed" },
+                    { date: "22 Sep 2024", title: "Proses Awal", description: "Dokumen disiapkan untuk penyusunan draf", status: "completed" },
+                    { date: "26 Sep 2024", title: "Penyusunan Draf", description: "Draf akta sedang disusun oleh notaris", status: "current" },
+                    { date: "Est. 30 Sep 2024", title: "Review Draf", description: "Draf akan dikirim untuk review Anda", status: "pending" },
+                    { date: "Est. 5 Oct 2024", title: "Penandatanganan", description: "Jadwal penandatanganan akta", status: "pending" }
+                ]
+            },
+            {
+                id: "2024/05/041",
+                serviceType: "SKMHT",
+                serviceName: "Surat Kuasa Membebankan Hak Tanggungan",
+                progress: 90,
+                status: "Reviewing",
+                estimatedCompletion: "08 Oct 2024",
+                currentStage: "Signing",
+                stageDescription: "Draf akta telah selesai dan menunggu jadwal penandatanganan. Kami akan menghubungi Anda segera untuk mengatur jadwal.",
+                stageStarted: "1 hari yang lalu",
+                lastUpdated: "27 Sep 2024",
+                documents: [
+                    { name: "KTP", required: true, uploaded: true },
+                    { name: "NPWP", required: true, uploaded: true },
+                    { name: "Sertifikat Asli", required: true, uploaded: true },
+                    { name: "PBB", required: true, uploaded: true },
+                    { name: "Surat Kuasa", required: false, uploaded: true }
+                ],
+                timeline: [
+                    { date: "18 Sep 2024", title: "Pengajuan Dokumen", description: "Semua dokumen yang diperlukan diterima dan diverifikasi", status: "completed" },
+                    { date: "20 Sep 2024", title: "Proses Awal", description: "Dokumen disiapkan untuk penyusunan draf", status: "completed" },
+                    { date: "22 Sep 2024", title: "Penyusunan Draf", description: "Draf akta disusun oleh notaris", status: "completed" },
+                    { date: "26 Sep 2024", title: "Review Draf", description: "Draf dikirim untuk review Anda", status: "completed" },
+                    { date: "27 Sep 2024", title: "Penandatanganan", description: "Menunggu jadwal penandatanganan", status: "current" }
+                ]
+            },
+            {
+                id: "2024/04/112",
+                serviceType: "APHT",
+                serviceName: "Akta Pemberian Hak Tanggungan",
+                progress: 65,
+                status: "In Progress",
+                estimatedCompletion: "15 Oct 2024",
+                currentStage: "Verification",
+                stageDescription: "Dokumen Anda sedang diverifikasi di Kantor Pertanahan. Proses ini biasanya memakan waktu 3-5 hari kerja.",
+                stageStarted: "3 hari yang lalu",
+                lastUpdated: "25 Sep 2024",
+                documents: [
+                    { name: "KTP", required: true, uploaded: true },
+                    { name: "NPWP", required: true, uploaded: true },
+                    { name: "Sertifikat Asli", required: true, uploaded: true },
+                    { name: "PBB", required: true, uploaded: false },
+                    { name: "Surat Pernyataan", required: false, uploaded: false }
+                ],
+                timeline: [
+                    { date: "10 Sep 2024", title: "Pengajuan Dokumen", description: "Semua dokumen yang diperlukan diterima dan diverifikasi", status: "completed" },
+                    { date: "12 Sep 2024", title: "Proses Awal", description: "Dokumen disiapkan untuk verifikasi", status: "completed" },
+                    { date: "15 Sep 2024", title: "Verifikasi BPN", description: "Dokumen diajukan ke Kantor Pertanahan", status: "completed" },
+                    { date: "22 Sep 2024", title: "Proses Verifikasi", description: "Verifikasi di Kantor Pertanahan", status: "current" },
+                    { date: "Est. 5 Oct 2024", title: "Penandatanganan", description: "Jadwal penandatanganan akta", status: "pending" }
+                ]
+            }
+        ],
+        notifications: [
+            {
+                id: 1,
+                title: "Dokumen Diperlukan",
+                message: "File #2024/05/042 membutuhkan dokumen PBB",
+                type: "warning",
+                read: false,
+                timestamp: "2 hours ago"
+            },
+            {
+                id: 2,
+                title: "Draf Siap Review",
+                message: "Draf untuk file #2024/05/041 telah siap untuk review",
+                type: "info",
+                read: false,
+                timestamp: "1 day ago"
+            },
+            {
+                id: 3,
+                title: "File Selesai",
+                message: "File #2024/04/112 telah selesai diverifikasi",
+                type: "success",
+                read: true,
+                timestamp: "3 days ago"
+            }
+        ],
+        settings: {
+            darkMode: false,
+            emailNotifications: true,
+            smsNotifications: false,
+            language: "id"
+        }
+    };
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load data from localStorage if available
+        const storedData = localStorage.getItem('notaryDocClientData');
+        if (storedData) {
+            appData = JSON.parse(storedData);
+        }
+        
+        // Initialize UI
+        initializeRouting();
+        initializeEventListeners();
+        updateDashboard();
+        updateFilesGrid();
+        updateNotifications();
+        
+        // Apply settings
+        applySettings();
+    });
+
+    // Routing
+    function initializeRouting() {
+        // Handle navigation clicks
+        const navLinks = document.querySelectorAll('.sidebar-link[data-page]');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.getAttribute('data-page');
+                navigateToPage(page);
+            });
+        });
+    }
+
+    function navigateToPage(pageId) {
+        // Hide all pages
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => {
+            page.classList.remove('active');
+        });
+        
+        // Show selected page
+        const selectedPage = document.getElementById(pageId);
+        if (selectedPage) {
+            selectedPage.classList.add('active');
+        }
+        
+        // Update sidebar active state
+        const navLinks = document.querySelectorAll('.sidebar-link[data-page]');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-page') === pageId) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Update page title
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) {
+            const titles = {
+                'dashboard': 'Dashboard',
+                'all_files': 'Semua File',
+                'file_details': 'Detail File',
+                'profile': 'Profil Saya'
+            };
+            pageTitle.textContent = titles[pageId] || 'NotaryDoc';
+        }
+        
+        // Initialize page-specific content
+        if (pageId === 'dashboard') {
+            updateDashboard();
+        } else if (pageId === 'all_files') {
+            updateFilesGrid();
+        }
+    }
+
+    // Event Listeners
+    function initializeEventListeners() {
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function() {
+                toggleDarkMode();
+            });
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) {
+                    sidebar.classList.toggle('hidden');
+                }
+            });
+        }
+        
+        // Notification panel
+        const notificationBtn = document.getElementById('notificationBtn');
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', function() {
+                toggleNotificationPanel();
+            });
+        }
+        
+        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
+        if (closeNotificationBtn) {
+            closeNotificationBtn.addEventListener('click', function() {
+                const notificationPanel = document.getElementById('notificationPanel');
+                if (notificationPanel) {
+                    notificationPanel.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Contact support
+        const contactSupportBtn = document.getElementById('contactSupportBtn');
+        if (contactSupportBtn) {
+            contactSupportBtn.addEventListener('click', function() {
+                const modal = document.getElementById('contactSupportModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            });
+        }
+        
+        const closeSupportModalBtn = document.getElementById('closeSupportModalBtn');
+        if (closeSupportModalBtn) {
+            closeSupportModalBtn.addEventListener('click', function() {
+                const modal = document.getElementById('contactSupportModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+        
+        const cancelSupportBtn = document.getElementById('cancelSupportBtn');
+        if (cancelSupportBtn) {
+            cancelSupportBtn.addEventListener('click', function() {
+                const modal = document.getElementById('contactSupportModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+        
+        const submitSupportBtn = document.getElementById('submitSupportBtn');
+        if (submitSupportBtn) {
+            submitSupportBtn.addEventListener('click', function() {
+                const subject = document.getElementById('supportSubject').value;
+                const message = document.getElementById('supportMessage').value;
+                
+                if (!subject || !message) {
+                    showNotification('Harap lengkapi subjek dan pesan', 'error');
+                    return;
+                }
+                
+                // In a real app, this would send the message to the server
+                showNotification('Pesan Anda telah terkirim', 'success');
+                
+                // Reset form
+                document.getElementById('supportSubject').value = '';
+                document.getElementById('supportMessage').value = '';
+                
+                // Close modal
+                const modal = document.getElementById('contactSupportModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+        
+        // Upload modal
+        const uploadDocBtn = document.getElementById('uploadDocBtn');
+        if (uploadDocBtn) {
+            uploadDocBtn.addEventListener('click', function() {
+                const modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            });
+        }
+        
+        const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
+        if (closeUploadModalBtn) {
+            closeUploadModalBtn.addEventListener('click', function() {
+                const modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+        
+        const cancelUploadBtn = document.getElementById('cancelUploadBtn');
+        if (cancelUploadBtn) {
+            cancelUploadBtn.addEventListener('click', function() {
+                const modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        }
+        
+        const submitUploadBtn = document.getElementById('submitUploadBtn');
+        if (submitUploadBtn) {
+            submitUploadBtn.addEventListener('click', function() {
+                const docType = document.getElementById('docTypeSelect').value;
+                const notes = document.getElementById('docNotes').value;
+                
+                if (!docType) {
+                    showNotification('Harap pilih jenis dokumen', 'error');
+                    return;
+                }
+                
+                // In a real app, this would upload the file to the server
+                showNotification('Dokumen berhasil diunggah', 'success');
+                
+                // Reset form
+                document.getElementById('docTypeSelect').value = '';
+                document.getElementById('docNotes').value = '';
+                document.getElementById('selectedFiles').innerHTML = '';
+                
+                // Close modal
+                const modal = document.getElementById('uploadModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+                
+                // Update file details if on file details page
+                if (document.getElementById('file_details').classList.contains('active')) {
+                    updateFileDetails();
+                }
+            });
+        }
+        
+        // File upload area
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        if (uploadArea && fileInput) {
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                handleFileSelection(files);
+            });
+            
+            fileInput.addEventListener('change', function() {
+                handleFileSelection(this.files);
+            });
+        }
+        
+        // Timeline toggle
+        const toggleTimeline = document.getElementById('toggleTimeline');
+        if (toggleTimeline) {
+            toggleTimeline.addEventListener('click', function() {
+                const timelineContent = document.getElementById('timelineContent');
+                if (timelineContent) {
+                    const isHidden = timelineContent.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        timelineContent.classList.remove('hidden');
+                        timelineContent.classList.add('animate-slide-up');
+                        this.querySelector('.material-symbols-outlined').textContent = 'expand_less';
+                    } else {
+                        timelineContent.classList.add('hidden');
+                        this.querySelector('.material-symbols-outlined').textContent = 'expand_more';
+                    }
+                }
+            });
+        }
+        
+        // Filter chips for files page
+        const filterChips = document.querySelectorAll('.filter-chip');
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                // Remove active state from all chips
+                filterChips.forEach(c => {
+                    c.classList.remove('bg-primary/10', 'text-primary');
+                    c.classList.add('bg-slate-100', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+                });
+                
+                // Add active state to clicked chip
+                this.classList.remove('bg-slate-100', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+                this.classList.add('bg-primary/10', 'text-primary');
+                
+                // Filter files
+                const filterType = this.getAttribute('data-filter');
+                filterFiles(filterType);
+            });
+        });
+        
+        // Profile page buttons
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', function() {
+                showNotification('Fitur edit profil akan segera tersedia', 'info');
+            });
+        }
+        
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', function() {
+                showNotification('Fitur ubah kata sandi akan segera tersedia', 'info');
+            });
+        }
+        
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin keluar?')) {
+                    // In a real app, this would log the user out
+                    showNotification('Anda telah keluar dari sistem', 'success');
+                    
+                    // Redirect to login page (in a real app)
+                    setTimeout(() => {
+                        alert('Anda akan diarahkan ke halaman login');
+                    }, 1000);
+                }
+            });
+        }
+        
+        // Download document button
+        const downloadDocBtn = document.getElementById('downloadDocBtn');
+        if (downloadDocBtn) {
+            downloadDocBtn.addEventListener('click', function() {
+                showNotification('Dokumen akan diunduh', 'success');
+                // In a real app, this would download the document
+            });
+        }
+        
+        // Contact notary button
+        const contactNotaryBtn = document.getElementById('contactNotaryBtn');
+        if (contactNotaryBtn) {
+            contactNotaryBtn.addEventListener('click', function() {
+                const modal = document.getElementById('contactSupportModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    
+                    // Pre-fill subject
+                    document.getElementById('supportSubject').value = 'Pertanyaan tentang file #' + document.getElementById('fileId').textContent;
+                }
+            });
+        }
+    }
+
+    // Dashboard Functions
+    function updateDashboard() {
+        // Update client name
+        document.getElementById('clientName').textContent = appData.client.name;
+        document.getElementById('welcomeName').textContent = appData.client.name;
+        
+        // Update stats
+        const activeFiles = appData.files.filter(file => file.status !== 'Completed').length;
+        const pendingDocs = appData.files.reduce((count, file) => {
+            return count + file.documents.filter(doc => doc.required && !doc.uploaded).length;
+        }, 0);
+        const completedFiles = appData.files.filter(file => file.status === 'Completed').length;
+        
+        document.getElementById('activeFilesCount').textContent = activeFiles;
+        document.getElementById('pendingDocsCount').textContent = pendingDocs;
+        document.getElementById('completedFilesCount').textContent = completedFiles;
+        
+        // Update recent files
+        updateRecentFiles();
+    }
+
+    function updateRecentFiles() {
+        const container = document.getElementById('recentFilesList');
+        container.innerHTML = '';
+        
+        // Sort files by last updated
+        const sortedFiles = [...appData.files].sort((a, b) => {
+            return new Date(b.lastUpdated) - new Date(a.lastUpdated);
+        });
+        
+        // Show only the first 3 files
+        const recentFiles = sortedFiles.slice(0, 3);
+        
+        recentFiles.forEach(file => {
+            const item = createRecentFileItem(file);
+            container.appendChild(item);
+        });
+    }
+
+    function createRecentFileItem(file) {
+        const item = document.createElement('div');
+        item.className = 'file-row p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer';
+        
+        // Determine status badge
+        let statusBadge = '';
+        if (file.status === 'In Progress') {
+            statusBadge = '<span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">Dalam Proses</span>';
+        } else if (file.status === 'Reviewing') {
+            statusBadge = '<span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Review</span>';
+        } else if (file.status === 'Completed') {
+            statusBadge = '<span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">Selesai</span>';
+        }
+        
+        item.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">description</span>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-900 dark:text-white">${file.id}</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">${file.serviceName}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white">${file.progress}%</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${file.estimatedCompletion}</p>
+                    </div>
+                    ${statusBadge}
+                </div>
+            </div>
+        `;
+        
+        // Add click event
+        item.addEventListener('click', function() {
+            showFileDetails(file.id);
+        });
+        
+        return item;
+    }
+
+    // Files Page Functions
+    function updateFilesGrid() {
+        const container = document.getElementById('filesGrid');
+        container.innerHTML = '';
+        
+        // Sort files by status (in progress first)
+        const sortedFiles = [...appData.files].sort((a, b) => {
+            if (a.status === 'In Progress' && b.status !== 'In Progress') return -1;
+            if (a.status !== 'In Progress' && b.status === 'In Progress') return 1;
+            return 0;
+        });
+        
+        // Create file cards
+        sortedFiles.forEach(file => {
+            const card = createFileCard(file);
+            container.appendChild(card);
+        });
+    }
+
+    function createFileCard(file) {
+        const card = document.createElement('div');
+        card.className = 'file-card bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden';
+        
+        // Determine status badge and color
+        let statusBadge = '';
+        let statusColor = '';
+        
+        if (file.status === 'In Progress') {
+            statusBadge = 'Dalam Proses';
+            statusColor = 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300';
+        } else if (file.status === 'Reviewing') {
+            statusBadge = 'Review';
+            statusColor = 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
+        } else if (file.status === 'Completed') {
+            statusBadge = 'Selesai';
+            statusColor = 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
+        }
+        
+        // Count pending documents
+        const pendingDocs = file.documents.filter(doc => doc.required && !doc.uploaded).length;
+        
+        card.innerHTML = `
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="font-mono text-sm font-bold text-slate-600 dark:text-slate-300">${file.id}</span>
+                    <span class="inline-flex items-center rounded-full ${statusColor} px-2 py-1 text-xs font-medium">
+                        ${statusBadge}
+                    </span>
+                </div>
+                <h3 class="font-semibold text-slate-900 dark:text-white mb-1">${file.serviceName}</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-700">
+                        <div class="h-1.5 rounded-full bg-primary" style="width: ${file.progress}%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-primary">${file.progress}%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Est. Selesai</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">${file.estimatedCompletion}</p>
+                    </div>
+                    ${pendingDocs > 0 ? 
+                        `<div class="text-right">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Dokumen Pending</p>
+                            <p class="text-sm font-bold text-warning-yellow">${pendingDocs}</p>
+                        </div>` : ''
+                    }
+                </div>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 px-5 py-3">
+                <button class="w-full text-center text-sm font-medium text-primary hover:text-primary-dark view-file-btn" data-id="${file.id}">
+                    Lihat Detail
+                </button>
+            </div>
+        `;
+        
+        // Add click event to view button
+        const viewBtn = card.querySelector('.view-file-btn');
+        viewBtn.addEventListener('click', function() {
+            showFileDetails(file.id);
+        });
+        
+        return card;
+    }
+
+    function filterFiles(filterType) {
+        const cards = document.querySelectorAll('#filesGrid .file-card');
+        
+        cards.forEach(card => {
+            if (filterType === 'all') {
+                card.style.display = 'block';
+            } else {
+                // In a real app, this would filter based on the file status
+                // For now, we'll just show/hide cards based on their index
+                const index = Array.from(cards).indexOf(card);
+                if (filterType === 'in-progress' && index < 2) {
+                    card.style.display = 'block';
+                } else if (filterType === 'pending' && index === 2) {
+                    card.style.display = 'block';
+                } else if (filterType === 'completed' && index > 2) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // File Details Functions
+    function showFileDetails(fileId) {
+        const file = appData.files.find(f => f.id === fileId);
+        if (!file) return;
+        
+        // Update file details
+        document.getElementById('fileId').textContent = file.id;
+        document.getElementById('fileTypeBadge').textContent = file.serviceType;
+        document.getElementById('fileServiceType').textContent = file.serviceName;
+        document.getElementById('fileLastUpdated').textContent = file.lastUpdated;
+        document.getElementById('fileEstCompletion').textContent = 'Perkiraan selesai pada ' + file.estimatedCompletion;
+        document.getElementById('fileProgressPercent').textContent = file.progress + '%';
+        document.getElementById('fileProgressBar').style.width = file.progress + '%';
+        document.getElementById('fileCurrentStage').textContent = file.currentStage;
+        document.getElementById('fileStageDescription').textContent = file.stageDescription;
+        document.getElementById('fileStageStarted').textContent = 'Dimulai ' + file.stageStarted;
+        
+        // Update document requirements
+        updateDocumentRequirements(file);
+        
+        // Update timeline
+        updateTimeline(file);
+        
+        // Navigate to file details page
+        navigateToPage('file_details');
+    }
+
+    function updateFileDetails() {
+        // Get current file ID
+        const fileId = document.getElementById('fileId').textContent;
+        const file = appData.files.find(f => f.id === fileId);
+        
+        if (file) {
+            // Update document requirements
+            updateDocumentRequirements(file);
+        }
+    }
+
+    function updateDocumentRequirements(file) {
+        const container = document.getElementById('documentRequirements');
+        container.innerHTML = '';
+        
+        // Count uploaded documents
+        const uploadedCount = file.documents.filter(doc => doc.uploaded).length;
+        document.getElementById('docStatusCount').textContent = `${uploadedCount} dari ${file.documents.length} dokumen`;
+        
+        // Create document requirement items
+        file.documents.forEach((doc, index) => {
+            const item = document.createElement('div');
+            item.className = 'flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700';
+            
+            // Determine status icon and color
+            let statusIcon = 'pending';
+            let statusColor = 'text-slate-400';
+            
+            if (doc.uploaded) {
+                statusIcon = 'check_circle';
+                statusColor = 'text-success-green';
+            } else if (doc.required) {
+                statusIcon = 'error';
+                statusColor = 'text-alert-red';
+            }
+            
+            item.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined ${statusColor}">${statusIcon}</span>
+                    <div>
+                        <p class="font-medium text-slate-900 dark:text-white">${doc.name}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${doc.required ? 'Wajib' : 'Opsional'}</p>
+                    </div>
+                </div>
+                ${doc.uploaded ? 
+                    `<span class="text-xs font-medium text-success-green">Diunggah</span>` :
+                    doc.required ? 
+                    `<button class="text-xs font-medium text-primary hover:text-primary-dark upload-doc-btn" data-doc="${doc.name}">Unggah</button>` :
+                    `<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Opsional</span>`
+                }
+            `;
+            
+            // Add click event to upload button
+            const uploadBtn = item.querySelector('.upload-doc-btn');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', function() {
+                    // Open upload modal with pre-selected document type
+                    const modal = document.getElementById('uploadModal');
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        
+                        // Pre-select document type
+                        const docTypeSelect = document.getElementById('docTypeSelect');
+                        for (let i = 0; i < docTypeSelect.options.length; i++) {
+                            if (docTypeSelect.options[i].text === doc.name) {
+                                docTypeSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            container.appendChild(item);
+        });
+    }
+
+    function updateTimeline(file) {
+        const container = document.getElementById('timelineContent');
+        container.innerHTML = '';
+        
+        // Create timeline items
+        file.timeline.forEach((item, index) => {
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item flex gap-4 items-start';
+            
+            // Determine step styling based on status
+            let stepIndicator = '';
+            let contentClass = 'pt-0.5';
+            
+            if (item.status === 'current') {
+                stepIndicator = `
+                    <div class="flex-shrink-0 size-6 rounded-full bg-primary border-2 border-white dark:border-slate-800 shadow flex items-center justify-center">
+                        <span class="size-2 rounded-full bg-white animate-pulse"></span>
+                    </div>
+                `;
+            } else if (item.status === 'completed') {
+                stepIndicator = `
+                    <div class="flex-shrink-0 size-6 rounded-full bg-success-green border-2 border-white dark:border-slate-800 shadow flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[12px] text-white">check</span>
+                    </div>
+                `;
+            } else {
+                stepIndicator = `
+                    <div class="flex-shrink-0 size-6 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center">
+                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">${index + 1}</span>
+                    </div>
+                `;
+                contentClass += ' opacity-60';
+            }
+            
+            timelineItem.innerHTML = `
+                ${stepIndicator}
+                <div class="${contentClass}">
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">${item.title}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">${item.description}</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">${item.date}</p>
+                </div>
+            `;
+            
+            container.appendChild(timelineItem);
+        });
+    }
+
+    // File Upload Functions
+    function handleFileSelection(files) {
+        const selectedFilesContainer = document.getElementById('selectedFiles');
+        selectedFilesContainer.innerHTML = '';
+        
+        if (files.length === 0) return;
+        
+        Array.from(files).forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded';
+            
+            // Check file size (10MB max)
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file.size > maxSize) {
+                fileItem.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-alert-red">error</span>
+                        <span class="text-sm text-slate-900 dark:text-white">${file.name}</span>
+                    </div>
+                    <span class="text-xs text-alert-red">Terlalu besar</span>
+                `;
+            } else {
+                fileItem.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-success-green">check_circle</span>
+                        <span class="text-sm text-slate-900 dark:text-white">${file.name}</span>
+                    </div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">${formatFileSize(file.size)}</span>
+                `;
+            }
+            
+            selectedFilesContainer.appendChild(fileItem);
+        });
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Profile Functions
+    function updateProfile() {
+        // Update profile information
+        document.getElementById('profileName').textContent = appData.client.name;
+        document.getElementById('profileEmail').textContent = appData.client.email;
+        document.getElementById('profilePhone').textContent = appData.client.phone;
+        document.getElementById('profileAddress').textContent = appData.client.address;
+        
+        // Update profile initials
+        const names = appData.client.name.split(' ');
+        let initials = '';
+        if (names.length >= 2) {
+            initials = names[0][0] + names[names.length - 1][0];
+        } else {
+            initials = appData.client.name.substring(0, 2);
+        }
+        document.getElementById('profileInitials').textContent = initials.toUpperCase();
+    }
+
+    // Notification Functions
+    function toggleNotificationPanel() {
+        const panel = document.getElementById('notificationPanel');
+        panel.classList.toggle('hidden');
+        
+        // Mark all notifications as read
+        if (!panel.classList.contains('hidden')) {
+            appData.notifications.forEach(notification => {
+                notification.read = true;
+            });
+            saveData();
+            updateNotifications();
+        }
+    }
+
+    function updateNotifications() {
+        const notificationList = document.getElementById('notificationList');
+        notificationList.innerHTML = '';
+        
+        // Count unread notifications
+        const unreadCount = appData.notifications.filter(n => !n.read).length;
+        const badge = document.getElementById('notificationBadge');
+        
+        if (unreadCount > 0) {
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+        
+        // Populate notification list
+        appData.notifications.forEach(notification => {
+            const item = document.createElement('div');
+            item.className = `p-3 rounded-lg border ${notification.read ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700' : 'bg-primary/5 border-primary/20'}`;
+            
+            // Get notification icon
+            let icon = 'info';
+            let iconColor = 'text-blue-600 dark:text-blue-400';
+            
+            if (notification.type === 'warning') {
+                icon = 'warning';
+                iconColor = 'text-amber-600 dark:text-amber-400';
+            } else if (notification.type === 'success') {
+                icon = 'check_circle';
+                iconColor = 'text-green-600 dark:text-green-400';
+            } else if (notification.type === 'error') {
+                icon = 'error';
+                iconColor = 'text-red-600 dark:text-red-400';
+            }
+            
+            item.innerHTML = `
+                <div class="flex gap-3">
+                    <div class="flex-shrink-0">
+                        <span class="material-symbols-outlined ${iconColor}">${icon}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white">${notification.title}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${notification.message}</p>
+                        <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">${notification.timestamp}</p>
+                    </div>
+                </div>
+            `;
+            
+            notificationList.appendChild(item);
+        });
+    }
+
+    function showNotification(message, type = 'info') {
+        // Create notification object
+        const notification = {
+            id: Date.now(),
+            title: type === 'success' ? 'Sukses' : type === 'error' ? 'Error' : 'Informasi',
+            message: message,
+            type: type,
+            read: false,
+            timestamp: 'Baru saja'
+        };
+        
+        // Add to notifications
+        appData.notifications.unshift(notification);
+        
+        // Keep only the latest 10 notifications
+        if (appData.notifications.length > 10) {
+            appData.notifications = appData.notifications.slice(0, 10);
+        }
+        
+        // Save and update
+        saveData();
+        updateNotifications();
+        
+        // Show notification panel
+        const panel = document.getElementById('notificationPanel');
+        panel.classList.remove('hidden');
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+            panel.classList.add('hidden');
+        }, 5000);
+    }
+
+    // Settings Functions
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark');
+        appData.settings.darkMode = document.documentElement.classList.contains('dark');
+        saveData();
+    }
+
+    function applySettings() {
+        // Apply dark mode
+        if (appData.settings.darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        // Update profile
+        updateProfile();
+    }
+
+    // Utility Functions
+    function saveData() {
+        localStorage.setItem('notaryDocClientData', JSON.stringify(appData));
+    }
+</script>
+</body>
+</html>

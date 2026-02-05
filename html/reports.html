@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NotaryDoc Tracker - Reports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f96ad",
+                        "primary-dark": "#166e80",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#121e20",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c2e",
+                        "alert-red": "#dc2626",
+                        "alert-bg": "#fef2f2",
+                        "success-green": "#10b981",
+                        "warning-yellow": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+        .sidebar-link.active {
+            background-color: #e8f0f2;
+            color: #1f96ad;
+        }
+        .dark .sidebar-link.active {
+            background-color: rgba(31, 150, 173, 0.2);
+            color: #1f96ad;
+        }
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .report-card {
+            transition: all 0.3s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #1f96ad;
+            color: #1f96ad;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="hidden w-64 flex-col border-r border-slate-200 bg-surface-light dark:border-slate-800 dark:bg-surface-dark lg:flex">
+        <div class="flex h-16 items-center gap-3 border-b border-slate-100 px-6 dark:border-slate-800">
+            <div class="flex items-center justify-center rounded-lg bg-primary/10 p-1.5 text-primary">
+                <span class="material-symbols-outlined">history_edu</span>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">NotaryDoc</span>
+        </div>
+        <div class="flex flex-1 flex-col justify-between p-4">
+            <nav class="space-y-1">
+                <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Menu</div>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="dashboard.html">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="new_file.html">
+                    <span class="material-symbols-outlined text-[20px]">note_add</span>
+                    New File
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="all_files.html">
+                    <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                    All Files
+                </a>
+                <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="clients.html">
+                    <span class="material-symbols-outlined text-[20px]">group</span>
+                    Clients
+                </a>
+                <a class="sidebar-link active flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors" href="reports.html">
+                    <span class="material-symbols-outlined text-[20px]">analytics</span>
+                    Reports
+                </a>
+            </nav>
+            <div class="flex flex-col gap-4">
+                <nav class="space-y-1">
+                    <div class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">System</div>
+                    <a class="sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800" href="#">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                        Settings
+                    </a>
+                </nav>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+                    <div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200" data-alt="User profile picture showing a smiling professional woman">
+                        <img alt="Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxVNWhQG_W_ed3cfYulehqFgy1zHjDMMIjmROUMwH1GdQ_-0YSFkCDbhAUraVspPkQuL0OxU4dpVlRtthPZjLgeYBHkvhbel0_QFpjzjajgl5twyaTdmLKvqyYVPWymWFDcQYNKWMkw6jaECoHtTlY5zsE3Cd5YLdUFJEX3Iz8WFCIdH6sH7N9wTapvHPoggn6meeaInC7hTPiKLsDjeY9KtEQzcjbvxSR5QU8MOMweu2luT32b5p7neJyxE0brTANOuECjzNuvegc"/>
+                    </div>
+                    <div class="flex flex-1 flex-col overflow-hidden">
+                        <span class="truncate text-sm font-bold text-slate-900 dark:text-white">Sarah W.</span>
+                        <span class="truncate text-xs text-slate-500 dark:text-slate-400">Notary Lead</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex h-full flex-1 flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header class="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-surface-light px-6 dark:border-slate-800 dark:bg-surface-dark">
+            <div class="lg:hidden">
+                <button class="flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex w-full items-center justify-between gap-6">
+                <h1 class="hidden text-xl font-bold text-slate-900 dark:text-white sm:block">Reports</h1>
+                <div class="flex items-center gap-4">
+                    <!-- Date Range Picker -->
+                    <div class="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg px-3 py-2">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-400">calendar_today</span>
+                        <select class="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>Last 3 Months</option>
+                            <option>This Year</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                    <!-- Export Button -->
+                    <button class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        <span class="hidden sm:inline">Export</span>
+                    </button>
+                    <!-- Print Button -->
+                    <button class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                        <span class="material-symbols-outlined text-[18px]">print</span>
+                        <span class="hidden sm:inline">Print</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar bg-background-light p-6 dark:bg-background-dark animate-fade-in">
+            <div class="mx-auto max-w-7xl space-y-6">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up">
+                    <div class="stat-card bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Total Files</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">142</p>
+                                <p class="text-xs text-success-green">+12% from last month</p>
+                            </div>
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">folder_open</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Completed</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">98</p>
+                                <p class="text-xs text-slate-500">69% completion rate</p>
+                            </div>
+                            <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Overdue</p>
+                                <p class="text-2xl font-bold text-alert-red">8</p>
+                                <p class="text-xs text-alert-red">5.6% overdue rate</p>
+                            </div>
+                            <div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Avg. Processing</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white">4.2d</p>
+                                <p class="text-xs text-warning-yellow">+0.5d from target</p>
+                            </div>
+                            <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400">schedule</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Report Tabs -->
+                <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="border-b border-slate-200 dark:border-slate-800">
+                        <nav class="flex space-x-8 px-6" aria-label="Report Tabs">
+                            <button class="tab-button active py-4 px-1 text-sm font-medium text-slate-900 dark:text-white" data-tab="overview">
+                                Overview
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="performance">
+                                Performance
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="sla">
+                                SLA Analysis
+                            </button>
+                            <button class="tab-button py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300" data-tab="clients">
+                                Client Activity
+                            </button>
+                        </nav>
+                    </div>
+                    
+                    <!-- Tab Content -->
+                    <div class="p-6">
+                        <!-- Overview Tab -->
+                        <div id="overview-tab" class="tab-content">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- File Status Chart -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">File Status Distribution</h3>
+                                    <div class="chart-container">
+                                        <canvas id="statusChart"></canvas>
+                                    </div>
+                                </div>
+                                <!-- Service Type Chart -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Service Types</h3>
+                                    <div class="chart-container">
+                                        <canvas id="serviceChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Monthly Trend -->
+                            <div class="mt-6 report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Monthly Trend</h3>
+                                <div class="chart-container" style="height: 250px;">
+                                    <canvas id="trendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Performance Tab -->
+                        <div id="performance-tab" class="tab-content hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Staff Performance -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Staff Performance</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">SW</div>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">Sarah Wijaya</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">32 files processed</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-green-600">98%</p>
+                                                <p class="text-xs text-slate-500">on-time</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs font-bold">BS</div>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">Bambang Santoso</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">28 files processed</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-amber-600">92%</p>
+                                                <p class="text-xs text-slate-500">on-time</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold">AS</div>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">Alicia Santoso</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">25 files processed</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-green-600">95%</p>
+                                                <p class="text-xs text-slate-500">on-time</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Processing Time Analysis -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Processing Time Analysis</h3>
+                                    <div class="chart-container">
+                                        <canvas id="processingChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bottleneck Analysis -->
+                            <div class="mt-6 report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Bottleneck Analysis</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="bg-slate-100 dark:bg-slate-700 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                                            <tr>
+                                                <th class="px-4 py-3">Process Step</th>
+                                                <th class="px-4 py-3">Avg. Duration</th>
+                                                <th class="px-4 py-3">Files Stuck</th>
+                                                <th class="px-4 py-3">Impact</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                            <tr class="hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                <td class="px-4 py-3 font-medium">BPN Verification</td>
+                                                <td class="px-4 py-3">5.2 days</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">8</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">High</span>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                <td class="px-4 py-3 font-medium">Tax Validation</td>
+                                                <td class="px-4 py-3">3.8 days</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">5</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">Medium</span>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                <td class="px-4 py-3 font-medium">Document Review</td>
+                                                <td class="px-4 py-3">1.2 days</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">2</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">Low</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SLA Analysis Tab -->
+                        <div id="sla-tab" class="tab-content hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- SLA Compliance Chart -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">SLA Compliance Rate</h3>
+                                    <div class="chart-container">
+                                        <canvas id="slaChart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <!-- Service Level Details -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Service Level Details</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">SKMHT (3 days)</span>
+                                                <span class="text-sm font-bold text-slate-900 dark:text-white">85%</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">AJB (5 days)</span>
+                                                <span class="text-sm font-bold text-slate-900 dark:text-white">92%</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                                                <div class="bg-green-600 h-2 rounded-full" style="width: 92%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">APHT (7 days)</span>
+                                                <span class="text-sm font-bold text-slate-900 dark:text-white">78%</span>
+                                            </div>
+                                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                                                <div class="bg-amber-600 h-2 rounded-full" style="width: 78%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- SLA Breach Details -->
+                            <div class="mt-6 report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">SLA Breach Analysis</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="bg-slate-100 dark:bg-slate-700 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                                            <tr>
+                                                <th class="px-4 py-3">File Number</th>
+                                                <th class="px-4 py-3">Client</th>
+                                                <th class="px-4 py-3">Service Type</th>
+                                                <th class="px-4 py-3">SLA</th>
+                                                <th class="px-4 py-3">Actual</th>
+                                                <th class="px-4 py-3">Delay</th>
+                                                <th class="px-4 py-3">Reason</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                            <tr class="hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                <td class="px-4 py-3 font-mono">2024/05/019</td>
+                                                <td class="px-4 py-3">PT. Maju Jaya</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-md bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700">SKMHT</span>
+                                                </td>
+                                                <td class="px-4 py-3">3 days</td>
+                                                <td class="px-4 py-3">6 days</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="text-red-600 font-medium">+3 days</span>
+                                                </td>
+                                                <td class="px-4 py-3">BPN Delay</td>
+                                            </tr>
+                                            <tr class="hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                <td class="px-4 py-3 font-mono">2024/04/112</td>
+                                                <td class="px-4 py-3">CV. Abadi Sentosa</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="inline-flex items-center rounded-md bg-teal-100 px-2 py-1 text-xs font-medium text-teal-700">APHT</span>
+                                                </td>
+                                                <td class="px-4 py-3">7 days</td>
+                                                <td class="px-4 py-3">12 days</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="text-red-600 font-medium">+5 days</span>
+                                                </td>
+                                                <td class="px-4 py-3">Missing Documents</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Client Activity Tab -->
+                        <div id="clients-tab" class="tab-content hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Top Clients -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Top Clients by Volume</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-lg font-bold text-slate-500">1</span>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">PT. Maju Jaya</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">12 files</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-slate-900 dark:text-white">8.5%</p>
+                                                <p class="text-xs text-slate-500">of total</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-lg font-bold text-slate-500">2</span>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">CV. Abadi Sentosa</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">8 files</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-slate-900 dark:text-white">5.6%</p>
+                                                <p class="text-xs text-slate-500">of total</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-lg font-bold text-slate-500">3</span>
+                                                <div>
+                                                    <p class="font-medium text-slate-900 dark:text-white">Budi Santoso</p>
+                                                    <p class="text-xs text-slate-500 dark:text-slate-400">6 files</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold text-slate-900 dark:text-white">4.2%</p>
+                                                <p class="text-xs text-slate-500">of total</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Client Retention -->
+                                <div class="report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Client Retention</h3>
+                                    <div class="chart-container">
+                                        <canvas id="retentionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Client Activity Timeline -->
+                            <div class="mt-6 report-card bg-slate-50 dark:bg-slate-800 rounded-xl p-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Recent Client Activities</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-start gap-4">
+                                        <div class="h-2 w-2 rounded-full bg-blue-600 mt-2"></div>
+                                        <div class="flex-1">
+                                            <p class="font-medium text-slate-900 dark:text-white">New file created</p>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">PT. Maju Jaya - SKMHT #2024/05/019</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-4">
+                                        <div class="h-2 w-2 rounded-full bg-green-600 mt-2"></div>
+                                        <div class="flex-1">
+                                            <p class="font-medium text-slate-900 dark:text-white">File completed</p>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">Dewi Lestari - AJB #2024/05/041</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">5 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-4">
+                                        <div class="h-2 w-2 rounded-full bg-amber-600 mt-2"></div>
+                                        <div class="flex-1">
+                                            <p class="font-medium text-slate-900 dark:text-white">Document requested</p>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">Budi Santoso - Additional documents for AJB #2024/05/042</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">1 day ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer Spacer -->
+            <div class="h-10"></div>
+        </div>
+    </main>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Update button states
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-300');
+                    btn.classList.remove('text-slate-900', 'dark:text-white');
+                });
+                
+                this.classList.add('active');
+                this.classList.remove('text-slate-500', 'hover:text-slate-700', 'dark:text-slate-400', 'dark:hover:text-slate-300');
+                this.classList.add('text-slate-900', 'dark:text-white');
+                
+                // Show/hide tab content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                document.getElementById(`${targetTab}-tab`).classList.remove('hidden');
+                
+                // Initialize charts for the active tab
+                initializeCharts(targetTab);
+            });
+        });
+        
+        // Initialize charts on page load
+        initializeCharts('overview');
+        
+        function initializeCharts(tab) {
+            if (tab === 'overview') {
+                // Status Chart
+                const statusCtx = document.getElementById('statusChart');
+                if (statusCtx && !statusCtx.chart) {
+                    statusCtx.chart = new Chart(statusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Completed', 'In Progress', 'Overdue', 'Pending'],
+                            datasets: [{
+                                data: [98, 28, 8, 8],
+                                backgroundColor: [
+                                    '#10b981',
+                                    '#1f96ad',
+                                    '#dc2626',
+                                    '#f59e0b'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Service Type Chart
+                const serviceCtx = document.getElementById('serviceChart');
+                if (serviceCtx && !serviceCtx.chart) {
+                    serviceCtx.chart = new Chart(serviceCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['AJB', 'SKMHT', 'APHT', 'Hibah'],
+                            datasets: [{
+                                label: 'Files',
+                                data: [45, 38, 32, 27],
+                                backgroundColor: '#1f96ad'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Trend Chart
+                const trendCtx = document.getElementById('trendChart');
+                if (trendCtx && !trendCtx.chart) {
+                    trendCtx.chart = new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Completed',
+                                data: [12, 19, 15, 25, 22, 30],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4
+                            }, {
+                                label: 'New Files',
+                                data: [15, 22, 18, 28, 25, 32],
+                                borderColor: '#1f96ad',
+                                backgroundColor: 'rgba(31, 150, 173, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            } else if (tab === 'performance') {
+                // Processing Time Chart
+                const processingCtx = document.getElementById('processingChart');
+                if (processingCtx && !processingCtx.chart) {
+                    processingCtx.chart = new Chart(processingCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Data Entry', 'Verification', 'BPN Process', 'Signing', 'Completion'],
+                            datasets: [{
+                                label: 'Average Days',
+                                data: [0.5, 1.2, 5.2, 0.8, 0.5],
+                                backgroundColor: [
+                                    '#10b981',
+                                    '#10b981',
+                                    '#dc2626',
+                                    '#10b981',
+                                    '#10b981'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Days'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } else if (tab === 'sla') {
+                // SLA Chart
+                const slaCtx = document.getElementById('slaChart');
+                if (slaCtx && !slaCtx.chart) {
+                    slaCtx.chart = new Chart(slaCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                            datasets: [{
+                                label: 'SLA Compliance %',
+                                data: [85, 88, 82, 90],
+                                borderColor: '#1f96ad',
+                                backgroundColor: 'rgba(31, 150, 173, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    min: 70,
+                                    max: 100,
+                                    title: {
+                                        display: true,
+                                        text: 'Compliance %'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } else if (tab === 'clients') {
+                // Retention Chart
+                const retentionCtx = document.getElementById('retentionChart');
+                if (retentionCtx && !retentionCtx.chart) {
+                    retentionCtx.chart = new Chart(retentionCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['New Clients', 'Returning Clients', 'Inactive'],
+                            datasets: [{
+                                data: [45, 142, 60],
+                                backgroundColor: [
+                                    '#1f96ad',
+                                    '#10b981',
+                                    '#6b7280'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
